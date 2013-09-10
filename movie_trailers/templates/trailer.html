@@ -1,0 +1,136 @@
+{% import 'trailer_helper.html' as helper %}
+{% extends "base.html" %}
+
+{% block meta_tags %}
+  <meta charset="utf-8">
+  <title>{{ movie.title }} Movie Trailers Official | Movie Trailers</title>
+  <meta name="description" content="Watch {{ movie.title }} Trailers Online - {{ movie.synopsis }}">
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="span 10">
+      <div class="row"> 
+        <div class="span8 offset2">
+          <h4 class="title">{{ movie.title }} ({{ movie.release_date.year }})</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span12">
+      <div class="row">
+        <div class="span2">
+          <hr>
+          <p class="sub-title">Trailers</p>
+            <ul class="unstyled trailer-links">
+              {% if movie.trailers|length > 0 %}
+                {{ helper.render_trailer_links(movie, current_index) }}
+              {% else %}
+                <li>No trailers</li>
+              {% endif %}
+            </ul>
+          <hr>
+          <p class="sub-title">Full Movie</p>
+          <ul class="unstyled purchase-links">
+            {{ helper.render_purchase_links(movie) }}
+          </ul>
+        </div>
+        <div class="span8">
+          <hr>
+          <div id="player">
+            {% if youtube_id %}
+              <iframe width="620" height="370" src="http://www.youtube.com/embed/{{ youtube_id }}?rel=0&iv_load_policy=3&modestbranding=1" frameborder="0" allowfullscreen></iframe>
+            {% else %}
+              <h5>No Trailer Available</h5>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span10">
+      <div class="row">
+        <div class="span2">
+          <hr>
+          <p class="sub-title">Overview</p>
+        </div>
+        <div class="span8">
+          <hr>
+          <div class="row">
+            <div class="span4">
+              <p><b>Synopsis</b></p>
+              <p>{{ movie.synopsis }}</p>
+            </div>
+            <div class="span4">
+              <div class="row">
+                <div class="span2">
+                  <p><b>Cast</b></p>
+                  <ul class="unstyled">
+                    {% for cast in movie.cast %}
+                      <li><a href="{{ cast.url }}">{{ cast.name }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="span2">
+                  <p><b>Genre</b></p>
+                  <ul class="unstyled">
+                    {% for genre in movie.genres %}
+                      <li><a href="/genre/{{ genre }}">{{ genre | capitalize }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% if reviews|length > 0 %}
+  <div class="row">
+    <div class="span10">
+      <div class="row">
+        <div class="span2">
+          <hr>
+          <p class="sub-title">Critic Reviews</p>
+          <ul class="unstyled">
+            <li>{{ movie.critic_rating }}% positive</li>
+          </ul>
+        </div>
+        <div class="span8">
+          <hr>
+          <div class="row">
+            <div class="span4">
+              {% for review in reviews_in_left_column %}
+                {{ helper.render_review(review, loop.last) }}
+              {% endfor %}
+            </div>
+            <div class="span4">
+              {% for review in reviews_in_right_column %}
+                {{ helper.render_review(review, loop.last) }}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+  {% set similar_movies = movie.similar_movies[0:4] %}
+  {% if similar_movies|length > 0 %}
+    <div class="row">
+      <div class="span2">
+        <hr>
+        <p class="sub-title">You may also like</p>
+      </div>
+      <div class="span8">
+        <hr>
+        <ul class="thumbnails">
+          {{ helper.render_similar_movies(similar_movies) }}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

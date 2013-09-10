@@ -1,0 +1,18 @@
+{% macro render_sidebar_link(option, current_option, url, alt_display=None) %}
+	{% if alt_display %}
+		{% set display = alt_display | capitalize %}
+	{% else %}
+		{% set display = option | capitalize %}
+	{% endif %}
+
+	{% if option == current_option %}
+		<li>{{ display }}</li>
+	{% else %}
+		<li><a href="{{ url }}">{{ display | capitalize }}</a></li>
+	{% endif %}
+{% endmacro %}
+
+{% macro render_url(genre, page, sort) %}
+	{% set url = "/genre/" + genre + "/" + sort + "/" + page|string %}
+	{{ url }}
+{% endmacro %}

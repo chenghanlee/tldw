@@ -1,0 +1,44 @@
+{% import 'common_helpers.html' as helper %}
+
+{% macro render_sort_links(actor, possible_sorts, current_sort) %}
+	<ul class="unstyled">
+		{% for sort in possible_sorts %}
+			{% if sort == "best" %}
+	 			{{ helper.render_sidebar_link(sort, current_sort, actor.url + "/" + sort, alt_display="Best Reviewed") }}
+	 		{% else %}
+				{{ helper.render_sidebar_link(sort, current_sort, actor.url + "/" + sort) }}
+			{% endif %}
+	 	{% endfor %}
+	</ul>
+{% endmacro %}
+
+{% macro render_next_previous(g) %}
+	{% if g.has_prev %}
+		<p class="pull-left"><a href="{{ render_prev_next_url(g.actor, g.current_sort, g.page-1) }}">&larr; Prev</a></p>
+	{% else %}
+		<p class="pull-left">&larr; Prev</p>
+	{% endif %}
+	{% if g.has_next %}
+		<p class="pull-right"><a href="{{ render_prev_next_url(g.actor, g.current_sort, g.page+1) }}">Next &rarr;</a></p>
+	{% else %}
+		<p class="pull-right">Next &rarr;</p>
+	{% endif %}
+{% endmacro %}
+
+
+{% macro render_prev_next_url(actor, sort, page) %}
+	{% set url = g.actor.url + "/" + sort + "/" + g.page-1|string %}
+	{{ url }}
+{% endmacro %}
+
+{% macro render_thumbnail(movie) %}
+	<li class="span2">
+	  	<div class="thumbnail">
+		    <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.poster }}"></a>
+		    <div class="caption">
+		      <p><a href="{{ movie.url }}">{{ movie.title | truncate(19, True) }}</a></p>
+		      <p>{{ movie.release_date.year }}</p>
+		    </div>
+	  	</div>
+	</li>
+{% endmacro %}

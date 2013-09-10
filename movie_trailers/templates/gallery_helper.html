@@ -1,0 +1,52 @@
+{% import 'common_helpers.html' as helper %}
+
+{% macro render_sort_links(current_genre, possible_sorts, current_sort) %}
+	<ul class="unstyled">
+		{% for sort in possible_sorts %}
+			{% if sort == "best" %}
+	 			{{ helper.render_sidebar_link("best", current_sort, "/genre/" + current_genre + "/" + sort, alt_display="Best Reviewed") }}
+	 		{% else %}
+				{{ helper.render_sidebar_link(sort, current_sort, "/genre/" + current_genre + "/" + sort) }}
+			{% endif %}
+	 	{% endfor %}
+	</ul>
+{% endmacro %}
+
+{% macro render_genre_links(possible_genres, current_genre, current_sort) %}
+		{% for genre in possible_genres %}
+			{% if genre == "all" %}
+	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/" + genre + "/" + current_sort, alt_display="Everything") }}
+	 		{% elif genre == "science fiction" %}
+	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/science-fiction/" + current_sort, alt_display="Science Fiction") }}
+	 		{% else %}
+	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/" + genre + "/" + current_sort) }}
+	 		{% endif %}
+	 	{% endfor %}
+	</ul>
+{% endmacro %}
+
+{% macro render_next_previous(g) %}
+	{% if g.has_prev %}
+		<p class="pull-left"><a href="{{ helper.render_url(g.current_genre, g.page-1, g.current_sort) }}">&larr; Prev</a></p>
+	{% else %}
+		<p class="pull-left">&larr; Prev</p>
+	{% endif %}
+	{% if g.has_next %}
+		<p class="pull-right"><a href="{{ helper.render_url(g.current_genre, g.page+1, g.current_sort) }}">Next &rarr;</a></p>
+	{% else %}
+		<p class="pull-right">Next &rarr;</p>
+	{% endif %}
+{% endmacro %}
+
+
+{% macro render_thumbnail(movie) %}
+	<li class="span2">
+	  	<div class="thumbnail">
+		    <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.poster }}"></a>
+		    <div class="caption">
+		      <p><a href="{{ movie.url }}">{{ movie.title | truncate(19, True) }}</a></p>
+		      <p>{{ movie.release_date.year }}</p>
+		    </div>
+	  	</div>
+	</li>
+{% endmacro %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block meta_tags %}
+  <title>{{ title }} Movie Trailers | Movie Trailers</title>
+  <meta name="description" content="Watch movie trailers of recent and award-winning {% if genre %} {{ genre }} {% endif %} movies online. Many movie trailers are available in high-quality HD and iphone versions">
+{% endblock %}
+
+{% block content %}
+  {% for list in movie_list %}
+    {% set genre = list[0] %}
+    {% set movies = list[1] %}
+    <div class="row">
+      <div class="span8 offset2">
+        <div class="row">
+          <div class="span6">
+             <h6 class="no-margin-bottom">{{ genre }} Movie Trailers</h6>
+          </div>
+          <div class="span2">
+            <ul class="unstyled no-margin-bottom">
+              <li>
+                {% if genre == "Newest" %}
+                  <a href="/movie-trailer">View {{ genre }}</a>
+                {% else %}
+                  <a href="/genre/{{ genre }}">View {{ genre }}</a>
+                {% endif %}
+              </li>
+            </ul>
+          </div>
+        </div>
+        <hr>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span8 offset2">
+        <ul class="thumbnails">
+          {% for movie in movies %}
+            <li class="span2">
+              <div class="thumbnail">
+                <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.poster }}"></a>
+               <!--  <div class="caption">
+                  <p class="no-margin-bottom">{{ movie.title|truncate(19, True) }}</p>
+                </div> -->
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <br>
+  {% endfor %}
+{% endblock %}
