@@ -1,11 +1,12 @@
 import json
+import traceback
 
 from flask import abort, Blueprint, g, jsonify, render_template, request
 from flask.ext.mongoengine import Pagination
 from movie_trailers.async import inc_view_count
 from movie_trailers.constants import genres, sorts, TTL
 from movie_trailers.extensions import redis
-from movie_trailers.models.Movie import Actor, Movie
+from movie_trailers.models.Movie import Movie
 
 movie = Blueprint("movie", __name__)
 
@@ -96,32 +97,3 @@ def return_youtube_id(movie_name, index=1):
     redis_set(key, page, rv)
     redis.expire(key, TTL)
     return rv
-
-
-@movie.route("/name/<name>/<sort>/<int:page>")
-@movie.route("/name/<name>/<sort>/")
-@movie.route("/name/<name>")
-def list_filmography(name, page=1, sort="newest"):
-    actor = Actor.get_actor_by_url_name(name)
-    if actor is None:
-        abort(404)
-
-    key = "{actor}:{sort}".format(actor=name, sort=sort)
-    rv = redis.hget(key, page)
-    if rv:
-        return rv
-
-    movies = actor.filmography(page, sort).only(
-                "_thumbnail", "_release_date", "_title",  "_url_title")
-    g.actor = actor
-    g.movies = movies
-    g.title = actor.name
-    g.page = page
-    g.possible_sorts = sorts
-    g.current_sort = sort 
-
-    rv = render_template("actor.html", g=g)
-    redis.hset(key, page, rv)
-    redis.expire(key, TTL)
-    return rv
-

@@ -1,77 +1,77 @@
-"use strict";
+// "use strict";
 
-var infiniteScroll = function () {
-    var thumbnail = ".thumbnail",
-        thumbnailContainer = ".thumbnails",
-        moreMovies = ".moreMovies";
+// var infiniteScroll = function () {
+//     var thumbnail = ".thumbnail",
+//         thumbnailContainer = ".thumbnails",
+//         moreMovies = ".moreMovies";
 
-    function appendMovie(movies) {
-        console.log("appending movie");
+//     function appendMovie(movies) {
+//         console.log("appending movie");
 
-        var container = $(thumbnailContainer),
-            path = "/static/templates/thumbnail.handlebars";
+//         var container = $(thumbnailContainer),
+//             path = "/static/templates/thumbnail.handlebars";
 
-        $.ajax({
-            url: path,
-            cache: true,
-        })
-        .done(function(data){
-            var template = Handlebars.compile(data);
-            $(thumbnailContainer).append(template(movies));
-            console.log($(moreMovies).contents());
-            $(moreMovies).contents().wrap("a");
-        });
-    }
+//         $.ajax({
+//             url: path,
+//             cache: true,
+//         })
+//         .done(function(data){
+//             var template = Handlebars.compile(data);
+//             $(thumbnailContainer).append(template(movies));
+//             console.log($(moreMovies).contents());
+//             $(moreMovies).contents().wrap("a");
+//         });
+//     }
 
-    function getMoreMovies(postURL) {
-        // TODO CHLEE:
-        // 1) Clean up the variables needed
-        // 2) Better logic than lastThumbnailIndex to determine which movies to load
-        // 3) Memoize this function call using jstorage
-        // 4) use getMoreMovie movies and append movies as deferred
-        //    --> getMoreMovies(postURL).then(appendMovies);
-        var deferred = new $.Deferred(),
-            lastThumbnail = _.max($(thumbnail), function(eachThumbnail){
-                var thumbnailIndex = $(eachThumbnail).attr("data-position");
-                return _.parseInt(thumbnailIndex);
-            }),
-            lastThumbnailIndex = $(lastThumbnail).attr("data-position");
+//     function getMoreMovies(postURL) {
+//         // TODO CHLEE:
+//         // 1) Clean up the variables needed
+//         // 2) Better logic than lastThumbnailIndex to determine which movies to load
+//         // 3) Memoize this function call using jstorage
+//         // 4) use getMoreMovie movies and append movies as deferred
+//         //    --> getMoreMovies(postURL).then(appendMovies);
+//         var deferred = new $.Deferred(),
+//             lastThumbnail = _.max($(thumbnail), function(eachThumbnail){
+//                 var thumbnailIndex = $(eachThumbnail).attr("data-position");
+//                 return _.parseInt(thumbnailIndex);
+//             }),
+//             lastThumbnailIndex = $(lastThumbnail).attr("data-position");
 
-        $(moreMovies).find("a").contents().unwrap();
-        $.ajax({
-            url: postURL,
-            data: {"index": lastThumbnailIndex},
-            type: "POST"
-        })
-        .done(function(rv) {
-            if(rv['status'] === "success"){
-                deferred.resolve(rv['data']);
-            }
-            else{
-                console.log(rv['msg']);
-                deferred.reject();
-            }
-        })
-        .fail(function() {
-            deferred.reject();
-        });
+//         $(moreMovies).find("a").contents().unwrap();
+//         $.ajax({
+//             url: postURL,
+//             data: {"index": lastThumbnailIndex},
+//             type: "POST"
+//         })
+//         .done(function(rv) {
+//             if(rv['status'] === "success"){
+//                 deferred.resolve(rv['data']);
+//             }
+//             else{
+//                 console.log(rv['msg']);
+//                 deferred.reject();
+//             }
+//         })
+//         .fail(function() {
+//             deferred.reject();
+//         });
 
-        return deferred.promise();
-    }
+//         return deferred.promise();
+//     }
 
-    function loadMoreMovies() {
-        $(moreMovies).click(function(e){
-            e.preventDefault();
+//     function loadMoreMovies() {
+//         $(moreMovies).click(function(e){
+//             e.preventDefault();
 
-            var url =  window.location.pathname;
-            getMoreMovies(url).done(appendMovie);
-        });
-    }
+//             var url =  window.location.pathname;
+//             getMoreMovies(url).done(appendMovie);
+//         });
+//     }
 
-    return{
-        loadMoreMovies: loadMoreMovies
-    };
-}();
+//     return{
+//         loadMoreMovies: loadMoreMovies
+//     };
+// }();
 
 // var trailerLinks = function () {
 //     // private variables
@@ -258,5 +258,5 @@ var infiniteScroll = function () {
 $(document).ready(function() {    
     // $.jStorage.flush();
     // trailerLinks.listenToClick();
-    infiniteScroll.loadMoreMovies();
+    // infiniteScroll.loadMoreMovies();
 });
