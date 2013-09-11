@@ -35,3 +35,5 @@ pip-log.txt
 *.[oa]
 *.py[co]
 *.rbc
+
+*.rdb
