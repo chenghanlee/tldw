@@ -26,7 +26,7 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
         return abort(404)
 
     cursor = Movie.get_movies_by_genre(genre, sort).only(
-                "_critic_rating", "_poster", "_release_date", "_title",  "_url_title")
+                "_critic_rating", "_thumbnail", "_release_date", "_title",  "_url_title")
     paginated_movies = Pagination(cursor, page, per_page)
     movies = [movie for movie in paginated_movies.items]
 
@@ -112,7 +112,7 @@ def list_filmography(name, page=1, sort="newest"):
         return rv
 
     movies = actor.filmography(page, sort).only(
-                "_poster", "_release_date", "_title",  "_url_title")
+                "_thumbnail", "_release_date", "_title",  "_url_title")
     g.actor = actor
     g.movies = movies
     g.title = actor.name

@@ -227,7 +227,7 @@ class Movie(db.Document, object):
     @property
     def similar_movies(self):
         movies = Movie.objects(_metadata___imdb_id__in=self._similar_movies).only(
-            "_poster", "_release_date", "_title",  "_url_title")
+            "_thumbnail", "_release_date", "_title",  "_url_title")
         return movies
 
     @property

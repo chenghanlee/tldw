@@ -42,7 +42,7 @@
 {% macro render_thumbnail(movie) %}
 	<li class="span2">
 	  	<div class="thumbnail">
-		    <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.poster }}"></a>
+		    <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.thumbnail }}"></a>
 		    <div class="caption">
 		      <p><a href="{{ movie.url }}">{{ movie.title | truncate(19, True) }}</a></p>
 		      <p>{{ movie.release_date.year }}</p>
