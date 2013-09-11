@@ -3,10 +3,12 @@
 {% import 'gallery_helper.html' as helper %}
 
 {% block sidebar %}
+  <p><b>Sort by</b></p>
 	<ul class="unstyled">
 		{{ helper.render_sort_links(g.current_genre, g.possible_sorts, g.current_sort) }}
 	</ul>
-	<p>&mdash;</p>
+	<hr>
+  <p><b>Genres</b></p>
 	<ul class="unstyled">
 		{{ helper.render_genre_links(g.possible_genres, g.current_genre, g.current_sort) }}
 	</ul>
