@@ -13,8 +13,8 @@ from movie_trailers.models.Movie import Movie, ViewCount
 @celery.task(base=Batches, flush_interval=120, queue="movie_stats")
 def inc_view_count(requests):
     '''
-    This is a celery job that batch process the writing of the
-    number of views for a movie trailer for that day into mongo.
+    This is a celery job that batch the number of views for a
+    movie trailer page
 
     This job will run once every hour.
     '''
