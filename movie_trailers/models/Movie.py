@@ -1,9 +1,7 @@
 from collections import defaultdict
 from itertools import groupby
 from movie_trailers.extensions import db
-from movie_trailers.models.redis_helpers import _hget, _hset, _zadd, _encode
 from movie_trailers.settings import Config
-from movie_trailers.views.view_helper import redis_get, redis_set
 from movie_trailers.extensions import redis
 
 class PurchaseLink(db.EmbeddedDocument):

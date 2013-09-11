@@ -6,7 +6,6 @@ from movie_trailers.async import inc_view_count
 from movie_trailers.constants import genres, sorts
 from movie_trailers.extensions import redis
 from movie_trailers.models.Movie import Actor, Movie
-from movie_trailers.views.view_helper import redis_get, redis_set
 
 movie = Blueprint("movie", __name__)
 
