@@ -5050,7 +5050,7 @@ input[type="submit"].btn.btn-mini {
   cursor: default;
 }
 .navbar {
-  overflow: visible;
+  overflow: auto;
   margin-bottom: 20px;
   *position: relative;
   *z-index: 2;
