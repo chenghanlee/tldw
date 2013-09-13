@@ -6,27 +6,27 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-      <div class="span8 offset2">
-        <h4 class="title">{{ g.title | title }} Movie Trailers</h4>
-      </div>
+  <div class="row">
+    <div class="span8 offset2">
+      <h4 class="title">{{ g.title | title }} Movie Trailers</h4>
     </div>
-    <div class="row">
-      <div class="span2">
-        <hr>
-        {% block sidebar %}
-        {% endblock %}
-        <hr>
-      </div>
-      <div class="span8">
-        <hr>
-        {% block gallery %}
-        {% endblock %}
-        <hr class="no-margin-top">
-      </div>
-    </div>
-    <div class="row">
-      {% block footer %}
+  </div>
+  <div class="row">
+    <div class="span2">
+      <hr>
+      {% block sidebar %}
       {% endblock %}
+      <hr>
     </div>
+    <div class="span8">
+      <hr>
+      {% block gallery %}
+      {% endblock %}
+      <hr class="no-margin-top">
+    </div>
+  </div>
+  <div class="row">
+    {% block footer %}
+    {% endblock %}
+  </div>
 {% endblock %}

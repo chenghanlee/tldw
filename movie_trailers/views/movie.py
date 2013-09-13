@@ -15,10 +15,10 @@ movie = Blueprint("movie", __name__)
 @movie.route("/genre/<genre>/", methods=["GET"])
 @movie.route("/", methods=["GET"])
 def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
-    key = "genre:{genre}:{sort}:get".format(genre=genre, page=page, sort=sort)
-    rv = redis.hget(key, page)
-    if rv:
-        return rv
+    # key = "genre:{genre}:{sort}:get".format(genre=genre, page=page, sort=sort)
+    # rv = redis.hget(key, page)
+    # if rv:
+    #     return rv
 
     if page < 1:
         return abort(404)
@@ -43,8 +43,8 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
     g.title = genre
     rv = render_template("genre.html", g=g)
 
-    redis.hset(key, page, rv)
-    redis.expire(key, TTL)
+    # redis.hset(key, page, rv)
+    # redis.expire(key, TTL)
     return rv
 
 @movie.route("/movie-trailer/<movie_name>/<int:index>", methods=["GET"])
@@ -55,10 +55,10 @@ def show_trailer(movie_name, index=1):
     if movie is None:
         return abort(404)
     
-    key = "movie-trailer:{name}".format(name=movie_name, index=index)
-    rv = redis.hget(key, index)
-    if rv:
-        return rv
+    # key = "movie-trailer:{name}".format(name=movie_name, index=index)
+    # rv = redis.hget(key, index)
+    # if rv:
+    #     return rv
 
     trailer = movie.trailer(index-1)
     youtube_id = trailer.youtube_id if trailer else None
@@ -71,8 +71,8 @@ def show_trailer(movie_name, index=1):
                             reviews_in_left_column=reviews_in_left_column,
                             reviews_in_right_column=reviews_in_right_column)
     inc_view_count.delay(url_title=movie_name)
-    redis.hset(key, index, rv)
-
+    # redis.hset(key, index, rv)
+    # redis.expire(key, TTL)
     return rv
 
    

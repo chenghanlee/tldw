@@ -15,7 +15,7 @@
 {% macro render_review(review, is_last) %}
 	<div class="block">
       {% if review.freshness == "fresh" %}
-        <p><b>{{ review.publication }}</b><span class="positive-review pull-right">&ctdot;</span></p>
+        <p><b>{{ review.publication }}</b><span class="positive-review"> &nbsp; <i class="icon-heart"></i></span></p>
       {% else %}
         <p><b>{{ review.publication }}</b></p>
       {% endif %}
@@ -29,12 +29,12 @@
 
 {% macro render_similar_movies(similar_movies) %}
   {% for movie in similar_movies %}
-    <li class="span2">
+    <li class="span2 no-margin-bottom">
       <div class="thumbnail">
         <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.thumbnail }}"></a>
         <div class="caption">
           <p><a href="{{ movie.url }}">{{ movie.title | truncate(19, True) }}</a></p>
-          <p>{{ movie.release_date.year }}</p>
+          <p class="grey">{{ movie.release_date.year }}</p>
         </div>
       </div>
     </li>

@@ -17,6 +17,10 @@ hr {
   	border-bottom: 1px solid #fff;
 }
 
+footer {
+	font-size: 11px;
+	margin-top: 80px;
+}
 .no-margin-top{
 	margin-top: 0px;
 }
@@ -30,8 +34,18 @@ hr {
 	margin-bottom: 0px;
 }
 
+.player{
+	margin-bottom: 20px;
+}
+
+.positive-review{
+	color: #e85c41;
+	font-size: 8px;
+	vertical-align: middle;
+}
+
 .title{
-	font-weight: 400;
+	/*font-weight: 400;*/
 	margin-bottom: 0px;
 }
 
@@ -39,13 +53,9 @@ hr {
 	font-weight: 700;
 }
 
-.current-trailer{
-	/*text-decoration: underline;*/
-}
-
 /* colors */
 .grey{
-	color: #c0c0c0;
+	color: #999999;
 }
 
 .light-grey{
@@ -93,20 +103,20 @@ select{
 	padding-top: 1px;
 }
 
+/* Thumbnails */
 .thumbnail{
-  padding: 0px;
-  
-  border: 0px;
-  -webkit-border-radius: 0;
-     -moz-border-radius: 0;
-          border-radius: 0;
-  -webkit-box-shadow: none;
-     -moz-box-shadow: none;
-          box-shadow: none;
-  -webkit-transition: none;
-     -moz-transition: none;
-       -o-transition: none;
-          transition: none;
+  	padding: 0px;
+  	border: 0px;
+    -webkit-border-radius: 0;
+       -moz-border-radius: 0;
+            border-radius: 0;
+  	-webkit-box-shadow: none;
+       -moz-box-shadow: none;
+            box-shadow: none;
+    -webkit-transition: none;
+       -moz-transition: none;
+         -o-transition: none;
+            transition: none;
 }
 
 .thumbnail > a > img {
@@ -117,6 +127,9 @@ select{
 	border: 1px solid #ccc;
 }
 
+li.no-margin-bottom{
+	margin-bottom: 0px;
+}
 .thumbnail .caption {
 	padding: 9px 0px 9px 0px;
 }
@@ -128,10 +141,4 @@ select{
 
 .thumbnail .caption p+p {
 	text-align: left;
-}
-
-.positive-review{
-	color: #e85c41;
-	font-size: 31.5px;
-	vertical-align: middle;
 }

@@ -38,7 +38,7 @@
         </div>
         <div class="span8">
           <hr>
-          <div id="player">
+          <div class="player">
             {% if youtube_id %}
               <iframe width="620" height="370" src="http://www.youtube.com/embed/{{ youtube_id }}?rel=0&iv_load_policy=3&modestbranding=1" frameborder="0" allowfullscreen></iframe>
             {% else %}
@@ -130,6 +130,7 @@
         <ul class="thumbnails">
           {{ helper.render_similar_movies(similar_movies) }}
         </ul>
+        <hr>
       </div>
     </div>
   {% endif %}
