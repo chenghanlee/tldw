@@ -17,7 +17,7 @@
 			{% if genre == "all" %}
 	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/" + genre + "/" + current_sort, alt_display="Everything") }}
 	 		{% elif genre == "science fiction" %}
-	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/science-fiction/" + current_sort, alt_display="Science Fiction") }}
+	 			{{ helper.render_sidebar_link("science-fiction", current_genre, "/genre/science-fiction/" + current_sort, alt_display="Science Fiction") }}
 	 		{% else %}
 	 			{{ helper.render_sidebar_link(genre, current_genre, "/genre/" + genre + "/" + current_sort) }}
 	 		{% endif %}

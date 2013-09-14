@@ -1,14 +1,14 @@
 {% macro render_sidebar_link(option, current_option, url, alt_display=None) %}
 	{% if alt_display %}
-		{% set display = alt_display | capitalize %}
+		{% set display = alt_display | title %}
 	{% else %}
-		{% set display = option | capitalize %}
+		{% set display = option | title %}
 	{% endif %}
-
+	
 	{% if option == current_option %}
 		<li>{{ display }}</li>
 	{% else %}
-		<li><a href="{{ url }}">{{ display | capitalize }}</a></li>
+		<li><a href="{{ url }}">{{ display | title }}</a></li>
 	{% endif %}
 {% endmacro %}
 
