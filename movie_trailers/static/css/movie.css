@@ -19,7 +19,7 @@ hr {
 
 footer {
 	font-size: 11px;
-	margin-top: 80px;
+	margin-top: 20px;
 }
 .no-margin-top{
 	margin-top: 0px;
@@ -36,13 +36,37 @@ footer {
 	line-height: 60px;
 }
 
+.logo > a, .logo > a:hover{
+	color: #222;
+	text-decoration: none;
+}
+
+.logo > a > .orange{
+	color: #222;
+
+	-webkit-transition: color 0.2s linear;
+    -moz-transition: color 0.2s linear;
+    -ms-transition: color 0.2s linear;
+    transition: color 0.2s linear;
+}
+
+.logo > a:hover > .orange{
+	color: #E6563A;
+}
+
+.logo > a:hover{
+	color: #222;
+}
+
 .player{
 	margin-bottom: 20px;
 }
 
 .positive-review{
-	color: #e85c41;
+	color: #E6563A;
 	font-size: 8px;
+	vertical-align: middle;
+	text-align: middle;
 }
 
 .title{
@@ -65,7 +89,7 @@ footer {
 }
 
 .orange{
-	color: #e85c41;
+	color: #E6563A;
 }
 
 /* navbar */
@@ -111,8 +135,8 @@ input.search-query{
 }
 
 .thumbnail > a > img {
-	height: 203px;
-	width: 134px;
+	height: 207px;
+	width: 139px;
 	margin-right: 0;
 	margin-left: 0;
 	border: 1px solid #ccc;
