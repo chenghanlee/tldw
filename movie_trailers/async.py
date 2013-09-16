@@ -22,11 +22,11 @@ def inc_view_count(requests):
     today = datetime.date(datetime.now())
 
     for request in requests:
-        url_title = request.kwargs['url_title']
-        views[url_title] += 1
+        formatted_title = request.kwargs['formatted_title']
+        views[formatted_title] += 1
 
-    for url_title, num_views in views.iteritems():
-        movie = Movie.objects(_url_title=url_title).first()
+    for formatted_title, num_views in views.iteritems():
+        movie = Movie.objects(_formatted_title=formatted_title).first()
         view = filter(lambda x: datetime.date(x.date) == today,
                          movie.views_by_date)
         if len(view) > 0:

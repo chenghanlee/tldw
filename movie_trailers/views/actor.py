@@ -5,21 +5,21 @@ from movie_trailers.models.Movie import Actor
 
 actor = Blueprint("actor", __name__)
 
-@actor.route("/name/<name>/<sort>/<int:page>")
-@actor.route("/name/<name>/<sort>/")
-@actor.route("/name/<name>")
-def list_filmography(name, page=1, sort="newest"):
-    actor = Actor.get_actor_by_url_name(name)
+@actor.route("/name/<formatted_name>/<sort>/<int:page>")
+@actor.route("/name/<formatted_name>/<sort>/")
+@actor.route("/name/<formatted_name>")
+def list_filmography(formatted_name, page=1, sort="newest"):
+    actor = Actor.get_actor_by_formatted_name(formatted_name)
     if actor is None:
         abort(404)
 
-    key = "{actor}:{sort}".format(actor=name, sort=sort)
+    key = "{actor}:{sort}".format(actor=formatted_name, sort=sort)
     rv = redis.hget(key, page)
     if rv:
         return rv
 
     movies = actor.filmography(page, sort).only(
-        "_thumbnail", "_release_date", "_title",  "_url_title")
+        "_thumbnail", "_release_date", "_title",  "_formatted_title")
     g.actor = actor
     g.movies = movies
     g.title = actor.name

@@ -43,7 +43,7 @@
 
 {% macro render_trailer_links(movie, current_index) %}
   {% for trailer in movie.trailers %}
-    {{ helper.render_sidebar_link(loop.index, current_index, ("/movie-trailer/" + movie.url_title + "/" + loop.index | string), alt_display=("trailer " + loop.index | string)) }}
+    {{ helper.render_sidebar_link(loop.index, current_index, ("/movie-trailer/" + movie.formatted_title + "/" + loop.index | string), alt_display=("trailer " + loop.index | string)) }}
   {% endfor %}
 {% endmacro %}
 

@@ -1,3 +1,6 @@
+import sys
+sys.path.append("../")
+
 from collections import defaultdict
 from itertools import groupby
 from movie_trailers.extensions import db
@@ -7,6 +10,7 @@ from movie_trailers.extensions import redis
 class PurchaseLink(db.EmbeddedDocument):
     _ASIN = db.StringField()
     _media_type = db.StringField()
+    _price = db.FloatField()
     _url = db.StringField()
 
     @property
@@ -21,47 +25,18 @@ class PurchaseLink(db.EmbeddedDocument):
     def url(self):
         return self._url
 
-
-class Trailer(db.EmbeddedDocument):
-    #trailers
-    _title = db.StringField()
-    _youtube_id = db.StringField()
-
-    @property
-    def title(self):
-        return self._title
-
-    @property
-    def youtube_id(self):
-        return self._youtube_id
-
 class Metadata(db.EmbeddedDocument):
     # various ids
     _imdb_id = db.StringField(unique=True)
-    _rotten_tomatoe_id = db.StringField()
-    _tmdb_id = db.IntField()
-    _updated = db.DateTimeField()
+    _runtime = db.IntField()
 
     @property
     def imdb_id(self):
         return self._imdb_id
 
     @property
-    def rotten_tomatoe_id(self):
-        return self._rotten_tomatoe_id
-
-    @property
-    def tmdb_id(self):
-        return self._tmdb_id
-
-    @property
-    def updated(self):
-        return self._updated
-
-    @property
-    def trailers(self):
-        return self._trailers
-
+    def runtime(self):
+        return self._runtime
 
 class Review(db.EmbeddedDocument):
     _critic = db.StringField()
@@ -115,14 +90,15 @@ class ViewCount(db.EmbeddedDocument):
 
 class Movie(db.Document, object):
     _director = db.StringField()
+    _formatted_director = db.StringField()
     _title = db.StringField()
-    _url_title = db.StringField()
+    _formatted_title = db.StringField()
     _synopsis = db.StringField()
-    _critic_rating = db.IntField()
+    _critics_score = db.IntField()
     _release_date = db.DateTimeField()
-    _poster = db.StringField()
-    _thumbnail = db.StringField()
-    _score = db.FloatField()
+    _poster = db.StringField() # full poster
+    _thumbnail = db.StringField() # resized poster
+    _trending_score = db.FloatField(default=0.0)
 
     _cast = db.ListField(db.ReferenceField('Actor'))
     _genres = db.ListField(db.StringField())
@@ -130,14 +106,14 @@ class Movie(db.Document, object):
     _views = db.ListField(db.EmbeddedDocumentField(ViewCount))
     _reviews = db.ListField(db.EmbeddedDocumentField(Review))
     _similar_movies=db.ListField(db.StringField()) # storing imdb ids
-    _trailers = db.ListField(db.EmbeddedDocumentField(Trailer))
+    _trailers = db.ListField(db.StringField())
     _purchase_links=db.ListField(db.EmbeddedDocumentField(PurchaseLink))
 
-    meta = {'indexes': ['_url_title', '_metadata._imdb_id', '_director', '_id',
-                        '-_critic_rating', '-_release_date', '-_views._date',
-                        ('_genres', '-_critic_rating'),
+    meta = {'indexes': ['_formatted_title', '_metadata._imdb_id', '_director', '_id',
+                        '-_critics_score', '-_release_date', '-_views._date',
+                        ('_genres', '-_critics_score'),
                         ('_genres', '-_release_date'),
-                        ('_genres', '-_score')]}
+                        ('_genres', '-_trending_score')]}
 
     @property
     def director(self):
@@ -152,8 +128,8 @@ class Movie(db.Document, object):
         return self._synopsis
 
     @property
-    def critic_rating(self):
-        return self._critic_rating
+    def critics_score(self):
+        return self._critics_score
 
     @property
     def genres(self):
@@ -207,7 +183,7 @@ class Movie(db.Document, object):
         return self._reviews
 
     def normalized_reviews(self, num_total_reviews=10):
-        num_fresh_reviews = max(1, int(self.critic_rating
+        num_fresh_reviews = max(1, int(self.critic_score
                                         / 100.0 * num_total_reviews))
         num_rotten_reviews = num_total_reviews - num_fresh_reviews
 
@@ -227,7 +203,7 @@ class Movie(db.Document, object):
     @property
     def similar_movies(self):
         movies = Movie.objects(_metadata___imdb_id__in=self._similar_movies).only(
-            "_thumbnail", "_release_date", "_title",  "_url_title")
+            "_thumbnail", "_release_date", "_title",  "_formatted_title")
         return movies
 
     @property
@@ -241,18 +217,22 @@ class Movie(db.Document, object):
             return None
 
     @property
-    def url(self):
-        prefix = "/movie-trailer/"
-        return prefix + self._url_title
+    def trending_score(self):
+        return self._trending_score
 
     @property
-    def url_title(self):
-        return self._url_title
+    def url(self):
+        prefix = "/movie-trailer/"
+        return prefix + self._formatted_title
+
+    @property
+    def formatted_title(self):
+        return self._formatted_title
 
 
     @classmethod
     def get_movies_by_genre(cls, genre, sort):
-        sort_by = {'newest': '-_release_date', 'best': '-_critic_rating'
+        sort_by = {'newest': '-_release_date', 'best': '-_critics_score'
                     }.get(sort, '-_metadata._updated')
         kwargs = {} if genre == 'all' else {'_genres': genre}
         cursor = Movie.objects(**kwargs).order_by(sort_by)
@@ -260,37 +240,37 @@ class Movie(db.Document, object):
 
     @classmethod
     def get_movie_by_title(cls, title):
-        movie =  Movie.objects(_url_title=title).first()
+        movie =  Movie.objects(_formatted_title=title).first()
         return movie
 
 class Actor(db.Document):
     _name = db.StringField(unique=True)
-    _url_name = db.StringField(unique=True)
+    _formatted_name = db.StringField(unique=True)
 
     _filmography = db.ListField(db.ObjectIdField(Movie))
     
-    meta = {'indexes': ['_id', '_url_name']}
+    meta = {'indexes': ['_id', '_formatted_name']}
     
     @property
     def name(self):
         return self._name
 
     @property
-    def url_name(self):
-        return self._url_name
+    def formatted_name(self):
+        return self._formatted_name
 
     @property
     def url(self):
-        full_url = '/name/' + self.url_name
+        full_url = '/name/' + self.formatted_name
         return full_url
 
     @classmethod
-    def get_actor_by_url_name(cls, url_name):
-        actor = Actor.objects(_url_name=url_name).first()
+    def get_actor_by_formatted_name(cls, formatted_name):
+        actor = Actor.objects(_formatted_name=formatted_name).first()
         return actor
 
     def filmography(self, page, sort, movies_per_page=32):
-        sort_by = {'newest': '-_release_date', 'best': '-_critic_rating'
+        sort_by = {'newest': '-_release_date', 'best': '-_critics_score'
                     }.get(sort, '-_metadata._updated')
         cursor = Movie.objects.filter(id__in=self._filmography).order_by(sort_by)
         return cursor

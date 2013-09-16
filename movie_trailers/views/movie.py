@@ -1,5 +1,4 @@
 import json
-import traceback
 
 from flask import abort, Blueprint, g, jsonify, render_template, request
 from flask.ext.mongoengine import Pagination
@@ -27,7 +26,7 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
         return abort(404)
 
     cursor = Movie.get_movies_by_genre(genre, sort).only(
-                "_critic_rating", "_thumbnail", "_release_date", "_title",  "_url_title")
+                "_critics_score", "_thumbnail", "_release_date", "_title",  "_formatted_title")
     paginated_movies = Pagination(cursor, page, per_page)
     movies = [movie for movie in paginated_movies.items]
 
@@ -70,7 +69,7 @@ def show_trailer(movie_name, index=1):
                             youtube_id=youtube_id, reviews=reviews, 
                             reviews_in_left_column=reviews_in_left_column,
                             reviews_in_right_column=reviews_in_right_column)
-    inc_view_count.delay(url_title=movie_name)
+    inc_view_count.delay(formatted_title=movie_name)
     # redis.hset(key, index, rv)
     # redis.expire(key, TTL)
     return rv

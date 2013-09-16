@@ -10,19 +10,22 @@ class Config(object):
 
     # AWS
     BUCKET = 'trading_spaces'
-    UPLOAD_FOLDER = '/Users/chenghanlee/Desktop/trading_spaces/static/images'
 
 class ProdConfig(Config):
     DEBUG = False
-
-class DevConfig(Config):
-    DEBUG = True
-    DEBUG_TB_PANELS = ('flask.ext.mongoengine.panels.MongoDebugPanel',)
     MONGODB_SETTINGS = {"DB": "admission_for_one",
                         "USERNAME": "lee.chenghan@gmail.com",
                         "PASSWORD": "Hnaoa6hW!",
                         "HOST": "rose.mongohq.com",
                         "PORT": 10083}
+class DevConfig(Config):
+    DEBUG = True
+    DEBUG_TB_PANELS = ('flask.ext.mongoengine.panels.MongoDebugPanel',)
+    MONGODB_SETTINGS = {"DB": "testdb",
+                        "USERNAME": "lee.chenghan@gmail.com",
+                        "PASSWORD": "Hnaoa6hW!",
+                        "HOST": "paulo.mongohq.com",
+                        "PORT": 10039}
 
 class CeleryConfig(Config):
     BROKER_TRANSPORT = 'sqs'
