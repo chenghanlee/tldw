@@ -22,6 +22,10 @@ class PurchaseLink(db.EmbeddedDocument):
         return self._media_type
 
     @property
+    def price(self):
+        return self._price
+
+    @property
     def url(self):
         return self._url
 
@@ -245,6 +249,8 @@ class Movie(db.Document, object):
 
 class Actor(db.Document):
     _name = db.StringField(unique=True)
+    _biography = db.StringField(default=None)
+    _headshot = db.StringField(default=None)
     _formatted_name = db.StringField(unique=True)
 
     _filmography = db.ListField(db.ObjectIdField(Movie))

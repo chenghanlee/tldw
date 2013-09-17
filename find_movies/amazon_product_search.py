@@ -6,6 +6,13 @@ class AmazonProductSearch():
         self.api = API(aws_access_key, aws_secret_key, 'us', affiliate_key)
 
     def _create_product(self, result):
+        '''
+        CHLEE TODO:
+        Need to grab the price of the media sold by Amazon
+        and not media sold by a third party, which is what i am
+        currently grabbing
+        '''
+
         product = {}
         product['ASIN'] = str(result.ASIN)
         product['Amount'] = str(result.OfferSummary.LowestNewPrice.Amount)
@@ -16,7 +23,7 @@ class AmazonProductSearch():
     def item_search(self, title, actor, expected_running_time,
             ResponseGroup='OfferFull, Medium'):
         '''
-        This method searches Amazon for DVD, Blu-ray, and Amazon Instant
+        This method searches Amazon for DVD, Blu-ray, and/or Amazon Instant
         Video listings of the movie that we are searching. Actor and running
         time are included in the query to improve the accuracy of the results
         returned by Amazon.
@@ -25,7 +32,8 @@ class AmazonProductSearch():
             title: Title of the movie
             actor: Top billing actor for the movie
             expected_running_time: Total running time for the movie
-            ResponseGroup: See response group on amazon product search api
+            ResponseGroup: See response group in amazon product search api
+                documentation
         '''
         try:
             results = self.api.item_search('DVD', actor=actor, Keywords=title,

@@ -12,14 +12,14 @@ from PIL import Image
 bucket_name = 'tldw'
 path = 'images/thumbnails'
 
-def gen_s3_path(filename):
+def _gen_s3_path(filename):
     global bucket_name
     global path
 
     return "http://s3.amazonaws.com/{bucket_name}/{path}/{filename}".format(
         bucket_name=bucket_name, path=path,  filename=filename)
 
-def resize_image(url, filename):
+def _resize_image(url, filename):
     image = urllib2.urlopen(url).read()
     img = Image.open(StringIO.StringIO(image))
 
@@ -30,7 +30,7 @@ def resize_image(url, filename):
     img = img.resize((width, height), Image.ANTIALIAS)
     img.save(filename, 'JPEG', quality=quality_val)
 
-def upload_local_file_to_s3(filename, verbose=False):
+def _upload_local_file_to_s3(filename, verbose=False):
     global bucket_name
     global path
 
@@ -43,12 +43,16 @@ def upload_local_file_to_s3(filename, verbose=False):
     key_name = os.path.join(path, filename)
     key = bucket.new_key(key_name)
     key.set_contents_from_filename(filename)
+    '''
+    CHLEE TODO:
+    Need to add a HTTP caching header to the key
+    '''
     key.make_public()
 
 def create_thumbnail(movie_title, movie_poster, verbose=False):
     filename = movie_title + '.jpg'
-    resize_image(movie_poster, filename)
-    upload_local_file_to_s3(filename, verbose=verbose)
-    s3_path = gen_s3_path(filename)
+    _resize_image(movie_poster, filename)
+    _upload_local_file_to_s3(filename, verbose=verbose)
+    s3_path = _gen_s3_path(filename)
     os.remove(filename)
     return s3_path
