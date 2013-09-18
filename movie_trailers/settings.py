@@ -4,12 +4,19 @@ class Config(object):
     AWS_SECRET_KEY = 'Ui+bQceXLKz81YrQetDu7wIbZqUWojLPh2Rb5bba'
     AWS_AFFILIATE_KEY = 'helppme-20'
 
+    #SWYFTYPE
+    SW_EMAIL = "lee.chenghan@gmail.com"
+    SW_PASSWORD = "Hnaoa6hW!"
+    SW_API_KEY = 'uzrps6WKZ85tc9aaxdcE'
+
     #API
     ROTTEN_TOMATOES_API_KEY = 'n298xcf5bkxf4qtnbmw7364x'
     TMDB_API_KEY = 'f43cd8f01703edd5a67e40027e5d4055'
 
     # AWS
     BUCKET = 'trading_spaces'
+
+
 
 class ProdConfig(Config):
     DEBUG = False

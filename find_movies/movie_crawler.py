@@ -58,7 +58,7 @@ def convert_review_json_to_obj(reviews):
 def index_movie(movie):
     genres = movie.genres
     release_date = str(movie.release_date)
-    release_year = self.release_date.split('-')[0]
+    release_year = release_date.split('-')[0]
     title = "{title} ({year})".format(title=movie.title, year=release_year)
     formatted_title = movie.formatted_title
     synopsis = movie.synopsis
