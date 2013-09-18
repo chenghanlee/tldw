@@ -6,13 +6,6 @@ class AmazonProductSearch():
         self.api = API(aws_access_key, aws_secret_key, 'us', affiliate_key)
 
     def _create_product(self, result):
-        '''
-        CHLEE TODO:
-        Need to grab the price of the media sold by Amazon
-        and not media sold by a third party, which is what i am
-        currently grabbing
-        '''
-
         product = {}
         product['ASIN'] = str(result.ASIN)
         product['Amount'] = str(result.OfferSummary.LowestNewPrice.Amount)
