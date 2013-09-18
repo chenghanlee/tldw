@@ -170,8 +170,6 @@ class Movie(db.Document, object):
 
     @property
     def cast(self, limit=6):
-        # todo, refractor this to optimize/reduce the number of
-        # data to load from actors
         return self._cast[:limit]
 
     @property

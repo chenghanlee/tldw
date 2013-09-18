@@ -113,11 +113,6 @@ class MovieInfo(object):
         Returns a list of imdb ids of movies that are similar to this one
         '''
 
-        '''
-        TODO CHLEE: Convert similar movies to using movie dictionaries rather
-        than a list of imdb ids. Need the title as well for doing a depth
-        first search through the movie graph.
-        '''
         movies = self._rt.info(self._rt_data['id'], 'similar')['movies']
         return movies
 
@@ -138,26 +133,49 @@ class MovieInfo(object):
         return self._rt_data['title']
 
     @property
-    def trailers(self, limit=2):
+    def trailers(self, limit=3):
+        '''
+        This function returns a list of trailers related to this movie.
+        
+        We will use TMDB's data if it returns  3 or more trailers. If not,
+        we will query youtube with the search term: "{movie_name} trailer
+        {release_year}" to find the trailers.
+
+        Returns a list of youtube ids of the trailers on youtube
+        '''
         trailers = self._tmdb_data.get_trailers()['youtube']
         if len(trailers) > 2:
-            youtube_ids = [trailer['source'] for trailer in trailers]
-            return youtube_ids
+            return [trailer['source'] for trailer in trailers]
         else:
-            '''
-            CHLEE TODO: Need to filter out repeated youtube videos
-            by checking the runtime of the videos.
-            '''
             release_year = str(self.release_date).split('-')[0]
             query = gdata.youtube.service.YouTubeVideoQuery()
-            query.vq = "{title} {release_year} trailer".format(
+            query.vq = "{title} trailer {release_year} ".format(
                             title=self._movie, release_year=release_year)
             query.orderby = 'relevance'
-            query.racy = 'include'
             feed = self._yt_service.YouTubeQuery(query)
-            youtube_ids = [self._extract_youtube_id(entry.media.player.url)
-                            for entry in feed.entry[:limit]]
-            return youtube_ids
+            # youtube_ids = [self._extract_youtube_id(entry.media.player.url)
+            #                 for entry in feed.entry[:limit]]
+            return self._remove_duplicate_yt_videos(feed, limit)
+            
+    def _remove_duplicate_yt_videos(self, feed, limit, threshold=5):
+        '''
+        This method removes duplicate videos by measuring the runtime
+        of the videos in feed.
+
+        If two videos are within 5 seconds of each other in runtime, 
+        we assume that one of the videos is a duplicate of the other.
+        '''
+        videos = []
+        for entry in feed.entry[:limit]:
+            video_id = self._extract_youtube_id(entry.media.player.url)
+            runtime = entry.media.duration.seconds
+            not_similar = [runtime < int(video["runtime"]) - threshold or
+                           runtime > int(video["runtime"]) + threshold for
+                           video in videos]
+            if all(not_similar):
+                videos.append({"yt_id": video_id, "runtime":runtime})
+        youtube_ids = [video['yt_id'] for video in videos]
+        return youtube_ids
 
     def _extract_youtube_id(self, youtube_url):
         video_id = youtube_url.split('v=')[1]
