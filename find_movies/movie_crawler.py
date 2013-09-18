@@ -3,6 +3,7 @@ sys.path.append("../movie_trailers/models")
 sys.path.append("../movie_trailers")
 
 import settings
+import swiftype
 
 from dateutil import parser
 from extensions import celery
@@ -54,6 +55,28 @@ def convert_review_json_to_obj(reviews):
         list_of_reviews.append(new_review)
     return list_of_reviews
 
+def index_movie(movie):
+    genres = movie.genres
+    release_date = str(movie.release_date)
+    release_year = self.release_date.split('-')[0]
+    title = "{title} ({year})".format(title=movie.title, year=release_year)
+    formatted_title = movie.formatted_title
+    synopsis = movie.synopsis
+    url = movie.url
+
+    client = swiftype.Client(api_key='uzrps6WKZ85tc9aaxdcE')
+    client.create_document('trailers', 'Movies', {
+        'external_id':  formatted_title,
+        'fields': [
+            {'name': 'title', 'value': title, 'type': 'string'},
+            {'name': 'genres', 'value': genres, 'type': 'enum'},
+            {'name': 'synopsis', 'value': synopsis, 'type': 'text'},
+            {'name': 'url', 'value': url, 'type': 'enum'},
+            {'name': 'release_date', 'value': release_date, 'type': 'date'},
+        ]
+    })
+
+
 @celery.task(name='save_movie_info_to_db', ignore_result=True,
     queue="movie_crawler")
 def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
@@ -90,7 +113,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
     amazon_purchase_links = movie.get_amazon_purchase_links(cast[0], runtime)
     
     # formatting some raw data into more complex sets of data
-    cast = convert_cast_json_to_obj(cast)
+    actors = convert_cast_json_to_obj(cast)
     formatted_director = format_string(movie.director)
     formatted_title = format_string(title)
     reviews = convert_review_json_to_obj(reviews)
@@ -107,16 +130,18 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                         _title=title, _formatted_title=formatted_title, 
                         _synopsis=synopsis, _critics_score=critics_score,
                         _release_date=release_date, _poster=poster,
-                        _thumbnail=thumbnail, _cast=cast, _genres=genres,
+                        _thumbnail=thumbnail, _cast=actors, _genres=genres,
                         _metadata=metadata, _reviews=reviews,
                         _similar_movies=similar_movies_imdb_ids,
                         _trailers=trailers,
                         _purchase_links=amazon_purchase_links)
     new_movie.save()
-
+    index_movie(new_movie)
     # update the cast's filmography
-    for actor in cast:
+    for actor in actors:
         actor.update(add_to_set___filmography=new_movie.id)
+
+    # index this movie in swyftype
 
     # save this movie's similar movies to the database as well
     if save_similar_movies:
