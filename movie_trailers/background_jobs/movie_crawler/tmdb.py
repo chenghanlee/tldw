@@ -129,8 +129,8 @@ class Movies(Core):
         for movie in self.iter_results():
             ratio = fuzzywuzzy.fuzz.ratio(self.searched, movie['title'])
             our_results.append((ratio, movie))
-        return sorted(our_results, reverse=True)
 
+        return sorted(our_results, key=lambda x: (x[0], x[1]['release_date']), reverse=True)
     def get_best_match(self):
         """
         Returns a tuple whose first element is the percent similarity between the search

@@ -1,5 +1,7 @@
 from datetime import datetime
 
+# site url
+site_url = "http://"
 # reference date
 reference_date = datetime(2013, 8, 24)
 

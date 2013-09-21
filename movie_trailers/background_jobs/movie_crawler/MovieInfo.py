@@ -29,7 +29,7 @@ class MovieInfo(object):
 
     def get_amazon_purchase_links(self, top_cast, runtime):
         products = self._amazon_product_search.item_search(self._movie, 
-                        top_cast, runtime)
+                    top_cast, runtime)
         return products
 
     @property
@@ -74,7 +74,7 @@ class MovieInfo(object):
         '''
 
         genres = self._tmdb_data.get_genres()
-        genres = [genre['name'] for genre in genres]
+        genres = [genre['name'].lower() for genre in genres]
         return genres
 
     @property
@@ -82,8 +82,10 @@ class MovieInfo(object):
         '''
         Returns a list of directors for this movie
         '''
-
-        return "tt" + self._rt_data['alternate_ids']['imdb']
+        try:
+            return "tt" + self._rt_data['alternate_ids']['imdb']
+        except:
+            return self._tmdb_data.get_imdb_id()
 
     @property
     def poster(self):
@@ -97,15 +99,20 @@ class MovieInfo(object):
         '''
         Return the runtime of this movie in minues
         '''
-
-        return self._rt_data['runtime']
+        try:
+            return int(self._rt_data['runtime'])
+        except:
+            return int(self._tmdb_data.get_runtime())
 
     @property
     def release_date(self):
         '''
         Returns this movie's release date in {year}-{month}-{day} format
         '''
-        return parser.parse(self._rt_data['release_dates']['theater'])
+        try:
+            return parser.parse(self._rt_data['release_dates']['theater'])
+        except:
+            return parser.parse(self._tmdb_data.get_release_date())
 
     @property
     def similar_movies(self):
@@ -121,8 +128,10 @@ class MovieInfo(object):
         '''
         Returns this movie's synopsis
         '''
-
-        return self._rt_data['synopsis']
+        synopsis = self._rt_data['synopsis']
+        if len(synopsis) == 0:
+            synopsis = self._tmdb_data.get_overview()
+        return synopsis
 
     @property
     def title(self):
@@ -153,8 +162,6 @@ class MovieInfo(object):
                             title=self._movie, release_year=release_year)
             query.orderby = 'relevance'
             feed = self._yt_service.YouTubeQuery(query)
-            # youtube_ids = [self._extract_youtube_id(entry.media.player.url)
-            #                 for entry in feed.entry[:limit]]
             return self._remove_duplicate_yt_videos(feed, limit)
             
     def _remove_duplicate_yt_videos(self, feed, limit, threshold=5):
@@ -168,11 +175,11 @@ class MovieInfo(object):
         videos = []
         for entry in feed.entry[:limit]:
             video_id = self._extract_youtube_id(entry.media.player.url)
-            runtime = entry.media.duration.seconds
-            not_similar = [runtime < int(video["runtime"]) - threshold or
-                           runtime > int(video["runtime"]) + threshold for
-                           video in videos]
-            if all(not_similar):
+            runtime = int(entry.media.duration.seconds)
+            similar = [runtime >= int(video["runtime"]) - threshold and
+                        runtime <= int(video["runtime"]) + threshold for
+                        video in videos]
+            if not any(similar):
                 videos.append({"yt_id": video_id, "runtime":runtime})
         youtube_ids = [video['yt_id'] for video in videos]
         return youtube_ids

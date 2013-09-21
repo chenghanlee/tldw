@@ -1,11 +1,8 @@
-import sys
-sys.path.append("../")
-
 from collections import defaultdict
+from flask.ext.mongoengine import MongoEngine
 from itertools import groupby
-from movie_trailers.extensions import db
-from movie_trailers.settings import Config
-from movie_trailers.extensions import redis
+
+db = MongoEngine()
 
 class PurchaseLink(db.EmbeddedDocument):
     _ASIN = db.StringField()
@@ -157,6 +154,11 @@ class Movie(db.Document, object):
         return links
 
     @property
+    def purchase_price(self):
+        links = {link.media_type: link._price for link in self._purchase_links}
+        return links
+
+    @property
     def dvd_purchase_link(self):
         return self.purchase_links.get('DVD', None)
 
@@ -185,7 +187,7 @@ class Movie(db.Document, object):
         return self._reviews
 
     def normalized_reviews(self, num_total_reviews=10):
-        num_fresh_reviews = max(1, int(self.critic_score
+        num_fresh_reviews = max(1, int(self.critics_score
                                         / 100.0 * num_total_reviews))
         num_rotten_reviews = num_total_reviews - num_fresh_reviews
 

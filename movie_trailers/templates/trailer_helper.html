@@ -1,17 +1,5 @@
 {% import 'common_helpers.html' as helper %}
 
-{% macro render_purchase_link(movie) %}
-  <div class="btn-group">
-    <button class="btn btn-danger"><a href="{{ movie.instant_watch_purchase_link}}" target="_target">
-      Watch Instantly</a></button>
-    <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
-    <ul class="dropdown-menu">
-      <li><a href="{{ movie.dvd_purchase_link}}" target="_blank">Buy DVD</a></li>
-      <li><a href="{{ movie.bluray_purchase_link }}" target="_blank">Buy-Bluray</a></li>
-    </ul>
-  </div>
-{% endmacro %}
-
 {% macro render_review(review, is_last) %}
 	<div class="block">
       {% if review.freshness == "fresh" %}
@@ -48,19 +36,19 @@
 {% endmacro %}
 
 {% macro render_purchase_links(movie) %}
-  {% if movie.purchase_links.get("DVD") %}
-    <li><a href="{{ movie.purchase_links.get('DVD') }}" target="_blank">Buy DVD</a></li>
+{% if movie.purchase_links.get("Amazon Instant Video") %}
+    <li><a href="{{ movie.purchase_links.get('Amazon Instant Video') }}" target="_blank">Online</a> &mdash; <span class="orange">${{ "%.2f" % movie.purchase_price.get("Amazon Instant Video") }}</span></li>
   {% else %}
-    <li class="grey">Buy DVD</li>
+    <li class="grey">Online</li>
+  {% endif %}
+  {% if movie.purchase_links.get("DVD") %}
+    <li><a href="{{ movie.purchase_links.get('DVD') }}" target="_blank">DVD</a> &mdash; <span class="grey">${{ "%.2f" % movie.purchase_price.get('DVD') }}</span></li>
+  {% else %}
+    <li class="grey">DVD</li>
   {% endif %}
   {% if movie.purchase_links.get("Blu-ray") %}
-    <li><a href="{{ movie.purchase_links.get('Blu-ray') }}" target="_blank">Buy Blu-ray</a></li>
+    <li><a href="{{ movie.purchase_links.get('Blu-ray') }}" target="_blank">Blu-ray</a> &mdash; <span class="grey">${{ "%.2f" % movie.purchase_price.get('Blu-ray') }}</span></li>
   {% else %}
-    <li class="grey">Buy Blu-ray</li>
-  {% endif %}
-  {% if movie.purchase_links.get("Amazon Instant Video") %}
-    <li><a href="{{ movie.purchase_links.get('Amazon Instant Video') }}" target="_blank">Watch Instantly</a></li>
-  {% else %}
-    <li class="grey">Watch Instantly</li>
+    <li class="grey">Blu-ray</li>
   {% endif %}
 {% endmacro %}

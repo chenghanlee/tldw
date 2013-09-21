@@ -2,7 +2,7 @@ import json
 
 from flask import abort, Blueprint, g, jsonify, render_template, request
 from flask.ext.mongoengine import Pagination
-from movie_trailers.async import inc_view_count
+from movie_trailers.background_jobs.movie_stats.movie_stats import inc_view_count
 from movie_trailers.constants import genres, sorts, TTL
 from movie_trailers.extensions import redis
 from movie_trailers.models.Movie import Movie
@@ -60,7 +60,7 @@ def show_trailer(movie_name, index=1):
     #     return rv
 
     trailer = movie.trailer(index-1)
-    youtube_id = trailer.youtube_id if trailer else None
+    youtube_id = trailer if trailer else None
     reviews = movie.normalized_reviews()
     middle = len(reviews)/2
     reviews_in_left_column = reviews[0::2]

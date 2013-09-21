@@ -47,7 +47,8 @@ class AmazonProductSearch():
                 if abs(expected_running_time - result.ItemAttributes.RunningTime
                     ) <= max_running_time_diff:
                     binding = result.ItemAttributes.Binding
-                    if not bindings_seen.get(binding):
+                    if (binding in bindings_seen.keys() and 
+                        not bindings_seen.get(binding)):
                         rv.append(self._create_product(result))
                         bindings_seen[binding] = True
             except Exception as e:
