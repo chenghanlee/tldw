@@ -105,9 +105,9 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
     # 1) Make movie_crawler more modular and robust, so it doesn't depend
     # on settings or models from movie_trailers
     # 2) Make the functions creat_thumbnails and index_movie async tasks, so
-    # that it doesn't block save_movie_info_to_mongo - dine
+    # that it doesn't block save_movie_info_to_mongo - done
     # 3) Need to make sure that the results returned by tmdb
-    # is sorted by the differnece in days between this movie
+    # is sorted by the differnece in days between this movie - done
     # and the expected release date
     # various API keys
     AWS_ACCESS_KEY = settings.Config.AWS_ACCESS_KEY
@@ -165,6 +165,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             continue
     
     thumbnail = create_thumbnail(formatted_title, poster, verbose=True)
+    print thumbnail
     print "saving {title}".format(title=title)
     new_movie = Movie(_director=director,
                         _formatted_director=formatted_director,
@@ -176,7 +177,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                         _similar_movies=similar_movies_imdb_ids,
                         _trailers=trailers,
                         _purchase_links=amazon_purchase_links)
-    new_movie.save()
+    # new_movie.save()
 
     # index this movie in swyftype
     index_movie.delay(new_movie)

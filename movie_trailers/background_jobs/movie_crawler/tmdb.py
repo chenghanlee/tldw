@@ -93,7 +93,8 @@ class Core(object):
         return sess["session_id"]
 
 class Movies(Core):
-    def __init__(self, title="", limit=False, language=None):
+    def __init__(self, title="", limit=False, language=None, expected_release_date=None):
+        self.expected_release_date=expected_release_date
         self.limit = limit
         self.update_configuration()
         self.searched = title
@@ -125,12 +126,26 @@ class Movies(Core):
 
         Ordered, descending, by the percentage similarity.
         """
+
         our_results = []
         for movie in self.iter_results():
             ratio = fuzzywuzzy.fuzz.ratio(self.searched, movie['title'])
             our_results.append((ratio, movie))
 
-        return sorted(our_results, key=lambda x: (x[0], x[1]['release_date']), reverse=True)
+        if self.expected_release_date is None:
+            return sorted(our_results, key=lambda x: (x[0], x[1]['release_date']), reverse=True)
+        else:
+            return sorted(our_results, key=lambda x: (x[0], -self._calc_time_diff(
+                    self.expected_release_date, x[1]['release_date'])), reverse=True)
+
+    def _calc_time_diff(self, expected_release_date, actual_release_date):
+        from dateutil import parser
+
+        expected_release_date = parser.parse(expected_release_date)
+        actual_release_date = parser.parse(actual_release_date)
+        diff = (expected_release_date - actual_release_date).days
+        return abs(diff)
+
     def get_best_match(self):
         """
         Returns a tuple whose first element is the percent similarity between the search
@@ -139,7 +154,7 @@ class Movies(Core):
         The result is the best-matching result from all the results we get from TMDb.
         """
         try:
-            return self.get_ordered_matches()[0]
+            return  self.get_ordered_matches()[0]
         except IndexError:
             return
 

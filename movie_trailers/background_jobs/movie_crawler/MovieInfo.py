@@ -22,7 +22,8 @@ class MovieInfo(object):
         # tmdb
         self._tmdb = tmdb
         self._tmdb.configure(tmdb_api_key)
-        movie = self._tmdb.Movies(movie, limit=True).get_best_match()
+        movie = self._tmdb.Movies(movie, limit=True,
+                    expected_release_date=self._rt_data['release_dates']['theater']).get_best_match()
         self._tmdb_data = self._tmdb.Movie(movie[1]['id'])
         # youtube
         self._yt_service = gdata.youtube.service.YouTubeService()
