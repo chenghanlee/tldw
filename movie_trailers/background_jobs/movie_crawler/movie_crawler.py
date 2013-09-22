@@ -165,7 +165,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             continue
     
     thumbnail = create_thumbnail(formatted_title, poster, verbose=True)
-    print thumbnail
+    
     print "saving {title}".format(title=title)
     new_movie = Movie(_director=director,
                         _formatted_director=formatted_director,
@@ -177,7 +177,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                         _similar_movies=similar_movies_imdb_ids,
                         _trailers=trailers,
                         _purchase_links=amazon_purchase_links)
-    # new_movie.save()
+    new_movie.save()
 
     # index this movie in swyftype
     index_movie.delay(new_movie)
