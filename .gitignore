@@ -21,6 +21,9 @@ develop-eggs
 # Pip Installer Log
 pip-log.txt
 
+# Password and such
+settings.py
+
 # Unit test / coverage
 .coverage
 .tox

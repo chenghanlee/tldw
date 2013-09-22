@@ -1,14 +1,13 @@
-#HACK: so that celery worker now works
-import sys
-sys.path.append("..")
-
+from celery import Celery
 from celery.contrib.batches import Batches
 from collections import defaultdict
 from datetime import datetime
+from movie_trailers import settings
 from movie_trailers.constants import reference_date
-from movie_trailers.extensions import celery
 from movie_trailers.models.Movie import Movie, ViewCount
 
+celery = Celery('movie_trailers.async')
+celery.config_from_object(settings.CeleryConfig)
 
 @celery.task(base=Batches, flush_interval=120, queue="movie_stats")
 def inc_view_count(requests):
@@ -22,11 +21,11 @@ def inc_view_count(requests):
     today = datetime.date(datetime.now())
 
     for request in requests:
-        url_title = request.kwargs['url_title']
-        views[url_title] += 1
+        formatted_title = request.kwargs['formatted_title']
+        views[formatted_title] += 1
 
-    for url_title, num_views in views.iteritems():
-        movie = Movie.objects(_url_title=url_title).first()
+    for formatted_title, num_views in views.iteritems():
+        movie = Movie.objects(_formatted_title=formatted_title).first()
         view = filter(lambda x: datetime.date(x.date) == today,
                          movie.views_by_date)
         if len(view) > 0:

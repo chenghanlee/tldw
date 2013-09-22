@@ -3,11 +3,6 @@ import redis
 import os
 import urlparse
 
-from flask.ext.mongoengine import MongoEngine
-
-celery = celery.Celery()
-db = MongoEngine()
-
 REDISCLOUD_URL = os.environ.get('REDISCLOUD_URL')
 if REDISCLOUD_URL:
 	url = urlparse.urlparse(REDISCLOUD_URL)

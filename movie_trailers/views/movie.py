@@ -1,9 +1,8 @@
 import json
-import traceback
 
 from flask import abort, Blueprint, g, jsonify, render_template, request
 from flask.ext.mongoengine import Pagination
-from movie_trailers.async import inc_view_count
+from movie_trailers.background_jobs.movie_stats.movie_stats import inc_view_count
 from movie_trailers.constants import genres, sorts, TTL
 from movie_trailers.extensions import redis
 from movie_trailers.models.Movie import Movie
@@ -27,7 +26,7 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
         return abort(404)
 
     cursor = Movie.get_movies_by_genre(genre, sort).only(
-                "_critic_rating", "_thumbnail", "_release_date", "_title",  "_url_title")
+                "_critics_score", "_thumbnail", "_release_date", "_title",  "_formatted_title")
     paginated_movies = Pagination(cursor, page, per_page)
     movies = [movie for movie in paginated_movies.items]
 
@@ -61,7 +60,7 @@ def show_trailer(movie_name, index=1):
     #     return rv
 
     trailer = movie.trailer(index-1)
-    youtube_id = trailer.youtube_id if trailer else None
+    youtube_id = trailer if trailer else None
     reviews = movie.normalized_reviews()
     middle = len(reviews)/2
     reviews_in_left_column = reviews[0::2]
@@ -70,7 +69,7 @@ def show_trailer(movie_name, index=1):
                             youtube_id=youtube_id, reviews=reviews, 
                             reviews_in_left_column=reviews_in_left_column,
                             reviews_in_right_column=reviews_in_right_column)
-    inc_view_count.delay(url_title=movie_name)
+    inc_view_count.delay(formatted_title=movie_name)
     # redis.hset(key, index, rv)
     # redis.expire(key, TTL)
     return rv
