@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime
 from flask.ext.mongoengine import MongoEngine
 from itertools import groupby
 
@@ -28,8 +29,13 @@ class PurchaseLink(db.EmbeddedDocument):
 
 class Metadata(db.EmbeddedDocument):
     # various ids
+    _date_added = db.DateTimeField(default=dateime.now())
     _imdb_id = db.StringField(unique=True)
     _runtime = db.IntField()
+
+    @property
+    def date_added(self):
+        return self._date_added
 
     @property
     def imdb_id(self):

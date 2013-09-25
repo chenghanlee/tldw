@@ -180,7 +180,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
     new_movie.save()
 
     # index this movie in swyftype
-    index_movie.delay(new_movie)
+    index_movie(new_movie)
 
     # update the cast's filmography
     print "updating actor"
