@@ -7,7 +7,7 @@ h5,
 h6,
 li {
   	font-size: 13px;
-  	font-family: "ff-dagny-web-pro";
+  	font-family: "ff-dagny-web-pro", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   	line-height: 19px;
   	margin-bottom: 0px;
 }
@@ -29,6 +29,30 @@ footer {
 	margin-bottom: 0px;
 }
 
+.player{
+	margin-bottom: 20px;
+}
+
+.positive-review{
+	color: #E6563A;
+	font-size: 8px;
+}
+
+.purchase-link{
+	width: 120px;
+}
+
+.title{
+	font-size: 24px;
+	font-weight: 400;
+	margin: 10px 0;
+}
+
+.sub-title{
+	font-weight: 700;
+}
+
+/* logo */
 .logo{
 	height: 60px;
 	margin-bottom: 0px;
@@ -58,28 +82,9 @@ footer {
 	color: #222;
 }
 
-.player{
-	margin-bottom: 20px;
-}
-
-.positive-review{
-	color: #E6563A;
-	font-size: 8px;
-}
-
-.title{
-	font-size: 24px;
-	font-weight: 400;
-	margin: 10px 0;
-}
-
-.sub-title{
-	font-weight: 700;
-}
-
 /* colors */
 .grey{
-	color: #999999;
+	color: #999;
 }
 
 .light-grey{
@@ -105,6 +110,10 @@ footer {
 	border-left: 2px solid #ccc;
 	border-right: 1px solid #ccc;
 	margin-left: 17px;
+}
+
+input.search-query{
+	font-size: 15px;
 }
 
 form.form-search{

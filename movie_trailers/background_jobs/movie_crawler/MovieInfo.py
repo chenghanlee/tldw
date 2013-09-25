@@ -165,7 +165,7 @@ class MovieInfo(object):
             feed = self._yt_service.YouTubeQuery(query)
             return self._remove_duplicate_yt_videos(feed, limit)
             
-    def _remove_duplicate_yt_videos(self, feed, limit, threshold=5):
+    def _remove_duplicate_yt_videos(self, feed, limit):
         '''
         This method removes duplicate videos by measuring the runtime
         of the videos in feed.
@@ -174,7 +174,11 @@ class MovieInfo(object):
         we assume that one of the videos is a duplicate of the other.
         '''
         videos = []
-        for entry in feed.entry[:limit]:
+        # if the video is longer than 10 minutes, its probably not a trailer
+        max_seconds = 600
+        entries = filter(lambda x: x.media.duration.seconds < max_seconds,
+                    feed.entry[:limit])
+        for entry in entries:
             video_id = self._extract_youtube_id(entry.media.player.url)
             runtime = int(entry.media.duration.seconds)
             similar = [runtime >= int(video["runtime"]) - threshold and

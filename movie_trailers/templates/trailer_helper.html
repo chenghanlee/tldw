@@ -22,7 +22,7 @@
         <a href="{{ movie.url }}"><img alt="{{ movie.title }}" src="{{ movie.thumbnail }}"></a>
         <div class="caption">
           <p><a href="{{ movie.url }}">{{ movie.title | truncate(19, True) }}</a></p>
-          <p class="grey">{{ movie.release_date.year }}</p>
+          <p class="grey"><i>{{ movie.release_date.year }}</i></p>
         </div>
       </div>
     </li>
@@ -36,19 +36,19 @@
 {% endmacro %}
 
 {% macro render_purchase_links(movie) %}
-{% if movie.purchase_links.get("Amazon Instant Video") %}
-    <li><a href="{{ movie.purchase_links.get('Amazon Instant Video') }}" target="_blank">Online</a> &mdash; <span class="orange">${{ "%.2f" % movie.purchase_price.get("Amazon Instant Video") }}</span></li>
-  {% else %}
-    <li class="grey">Online</li>
-  {% endif %}
   {% if movie.purchase_links.get("DVD") %}
-    <li><a href="{{ movie.purchase_links.get('DVD') }}" target="_blank">DVD</a> &mdash; <span class="grey">${{ "%.2f" % movie.purchase_price.get('DVD') }}</span></li>
+    <li><a href="{{ movie.purchase_links.get('DVD') }}" target="_blank">DVD</a> &mdash; <span style="font-weight: lighter;">${{ "%.2f" % movie.purchase_price.get('DVD') }}</span></li>
   {% else %}
     <li class="grey">DVD</li>
   {% endif %}
   {% if movie.purchase_links.get("Blu-ray") %}
-    <li><a href="{{ movie.purchase_links.get('Blu-ray') }}" target="_blank">Blu-ray</a> &mdash; <span class="grey">${{ "%.2f" % movie.purchase_price.get('Blu-ray') }}</span></li>
+    <li><a href="{{ movie.purchase_links.get('Blu-ray') }}" target="_blank">Blu-ray</a> &mdash; <span style="font-weight: lighter;">${{ "%.2f" % movie.purchase_price.get('Blu-ray') }}<span></li>
   {% else %}
     <li class="grey">Blu-ray</li>
+  {% endif %}
+  {% if movie.purchase_links.get("Amazon Instant Video") %}
+    <li><a href="{{ movie.purchase_links.get('Amazon Instant Video') }}" target="_blank">Watch Online</a> &mdash; <span style="font-weight: lighter;">${{ "%.2f" % movie.purchase_price.get("Amazon Instant Video") }}</span></li>
+  {% else %}
+    <li class="grey">Watch Online</li>
   {% endif %}
 {% endmacro %}

@@ -1,6 +1,7 @@
 import json
 
-from flask import abort, Blueprint, g, jsonify, render_template, request
+from datetime import datetime, timedelta
+from flask import abort, Blueprint, g, jsonify, make_response, render_template, request
 from flask.ext.mongoengine import Pagination
 from movie_trailers.background_jobs.movie_stats.movie_stats import inc_view_count
 from movie_trailers.constants import genres, sorts, TTL
@@ -9,15 +10,26 @@ from movie_trailers.models.Movie import Movie
 
 movie = Blueprint("movie", __name__)
 
+@movie.after_request
+def set_http_header(response):
+    max_age = 3600 # 1 hour
+    minutes = 60 # 1 hour 
+    expires = datetime.utcnow() + timedelta(minutes=minutes)
+    expires = expires.strftime("%a, %d %b %Y %H:%M:%S GMT")
+    response.headers['Cache-Control'] = "public, max-age={max_age}".format(
+        max_age=max_age)
+    response.headers['Expires'] = expires
+    return response
+
 @movie.route("/genre/<genre>/<sort>/<int:page>", methods=["GET"])
 @movie.route("/genre/<genre>/<sort>", methods=["GET"])
 @movie.route("/genre/<genre>/", methods=["GET"])
 @movie.route("/", methods=["GET"])
 def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
-    # key = "genre:{genre}:{sort}:get".format(genre=genre, page=page, sort=sort)
-    # rv = redis.hget(key, page)
-    # if rv:
-    #     return rv
+    key = "genre:{genre}:{sort}".format(genre=genre, page=page, sort=sort)
+    rv = redis.hget(key, page)
+    if rv:
+        return rv
 
     if page < 1:
         return abort(404)
@@ -42,8 +54,8 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
     g.title = genre
     rv = render_template("genre.html", g=g)
 
-    # redis.hset(key, page, rv)
-    # redis.expire(key, TTL)
+    redis.hset(key, page, rv)
+    redis.expire(key, TTL)
     return rv
 
 @movie.route("/movie-trailer/<movie_name>/<int:index>", methods=["GET"])
@@ -54,10 +66,10 @@ def show_trailer(movie_name, index=1):
     if movie is None:
         return abort(404)
     
-    # key = "movie-trailer:{name}".format(name=movie_name, index=index)
-    # rv = redis.hget(key, index)
-    # if rv:
-    #     return rv
+    key = "movie-trailer:{name}".format(name=movie_name, index=index)
+    rv = redis.hget(key, index)
+    if rv:
+        return rv
 
     trailer = movie.trailer(index-1)
     youtube_id = trailer if trailer else None
@@ -70,8 +82,8 @@ def show_trailer(movie_name, index=1):
                             reviews_in_left_column=reviews_in_left_column,
                             reviews_in_right_column=reviews_in_right_column)
     inc_view_count.delay(formatted_title=movie_name)
-    # redis.hset(key, index, rv)
-    # redis.expire(key, TTL)
+    redis.hset(key, index, rv)
+    redis.expire(key, TTL)
     return rv
 
    
