@@ -154,7 +154,7 @@ class MovieInfo(object):
         Returns a list of youtube ids of the trailers on youtube
         '''
         trailers = self._tmdb_data.get_trailers()['youtube']
-        if len(trailers) > 2:
+        if len(trailers) > limit:
             return [trailer['source'] for trailer in trailers]
         else:
             release_year = str(self.release_date).split('-')[0]
@@ -163,14 +163,14 @@ class MovieInfo(object):
                             title=self._movie, release_year=release_year)
             query.orderby = 'relevance'
             feed = self._yt_service.YouTubeQuery(query)
-            return self._remove_duplicate_yt_videos(feed, limit)
+            return self._remove_duplicate_yt_videos(feed)
             
-    def _remove_duplicate_yt_videos(self, feed, limit):
+    def _remove_duplicate_yt_videos(self, feed, threshold=10):
         '''
         This method removes duplicate videos by measuring the runtime
         of the videos in feed.
 
-        If two videos are within 5 seconds of each other in runtime, 
+        If two videos are within 10 seconds of each other in runtime, 
         we assume that one of the videos is a duplicate of the other.
         '''
         videos = []

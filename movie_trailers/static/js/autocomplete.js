@@ -538,7 +538,7 @@
     sortDirection: undefined,
     fetchFields: undefined,
     noResultsClass: 'noResults',
-    noResultsMessage: undefined,
+    noResultsMessage: 'No results found',
     onComplete: defaultOnComplete,
     resultRenderFunction: defaultResultRenderFunction,
     renderFunction: defaultRenderFunction,

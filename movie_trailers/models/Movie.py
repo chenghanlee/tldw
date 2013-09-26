@@ -29,7 +29,7 @@ class PurchaseLink(db.EmbeddedDocument):
 
 class Metadata(db.EmbeddedDocument):
     # various ids
-    _date_added = db.DateTimeField(default=dateime.now())
+    _date_added = db.DateTimeField(default=datetime.now())
     _imdb_id = db.StringField(unique=True)
     _runtime = db.IntField()
 
