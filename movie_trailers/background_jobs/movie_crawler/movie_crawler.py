@@ -6,6 +6,7 @@ import settings
 import swiftype
 
 from celery import Celery
+from datetime import datetime
 from dateutil import parser
 from format_string import format_string
 from Movie import db, Actor, Metadata, Movie, PurchaseLink, Review
@@ -42,7 +43,8 @@ def convert_cast_json_to_obj(casts):
 
 def convert_to_metadata(imdb_id, runtime):
     # movie metadata
-    metadata = Metadata(_imdb_id=imdb_id, _runtime=runtime)
+    metadata = Metadata(_imdb_id=imdb_id, _runtime=runtime,
+        _date_added=datetime.now())
     return metadata
 
 def convert_review_json_to_obj(reviews):

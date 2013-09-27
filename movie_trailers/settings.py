@@ -17,8 +17,6 @@ class Config(object):
     # AWS
     BUCKET = 'trading_spaces'
 
-
-
 class ProdConfig(Config):
     DEBUG = False
     MONGODB_SETTINGS = {"DB": "admission_for_one",

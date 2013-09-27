@@ -175,6 +175,7 @@ class MovieInfo(object):
         '''
         videos = []
         # if the video is longer than 10 minutes, its probably not a trailer
+        limit = 3
         max_seconds = 600
         entries = filter(lambda x: x.media.duration.seconds < max_seconds,
                     feed.entry[:limit])
