@@ -18,7 +18,7 @@ from upload_to_s3 import download_image, upload_to_s3
 celery = Celery("movie_crawler.tasks")
 celery.config_from_object(settings.CeleryConfig)
 db_conn_settings = dict([(k.lower(), v) for k, v in
-                    settings.DevConfig.MONGODB_SETTINGS.items() if v])
+                    settings.ProdConfig.MONGODB_SETTINGS.items() if v])
 db.connect(**db_conn_settings)
 
 
