@@ -54,7 +54,7 @@ class CeleryConfig(Config):
         'movie_crawler': {
             'exchange': 'movie_crawler',
             'routing_key': 'movie_crawler',
-        }
+        },
         'actor_crawler': {
             'exchange': 'actor_crawler',
             'routing_key': 'actor_crawler',
