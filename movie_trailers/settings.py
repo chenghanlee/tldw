@@ -27,11 +27,11 @@ class ProdConfig(Config):
 class DevConfig(Config):
     DEBUG = True
     DEBUG_TB_PANELS = ('flask.ext.mongoengine.panels.MongoDebugPanel',)
-    MONGODB_SETTINGS = {"DB": "admission_for_one",
-                        "USERNAME": "lee.chenghan@gmail.com",
+    MONGODB_SETTINGS = {"DB": "Prototype",
+                        "USERNAME": "soccerbud",
                         "PASSWORD": "Hnaoa6hW!",
-                        "HOST": "rose.mongohq.com",
-                        "PORT": 10083}
+                        "HOST": "paulo.mongohq.com",
+                        "PORT": 10037}
 
 class CeleryConfig(Config):
     BROKER_TRANSPORT = 'sqs'

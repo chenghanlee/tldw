@@ -3,7 +3,6 @@ sys.path.append("../../../movie_trailers")
 sys.path.append("../../../movie_trailers/models")
 
 import settings
-import swiftype
 
 from celery import Celery
 from datetime import datetime
@@ -11,7 +10,7 @@ from dateutil import parser
 from format_string import format_string
 from Movie import db, Actor, Metadata, Movie, PurchaseLink, Review
 from MovieInfo import MovieInfo
-from upload_to_s3 import create_thumbnail
+from tasks import create_thumbnail, index_movie, update_actor_bio_and_picture
 
 celery = Celery("movie_crawler.tasks")
 celery.config_from_object(settings.CeleryConfig)
@@ -36,13 +35,13 @@ def convert_cast_json_to_obj(casts):
     for name in casts:
         actor = Actor.objects(_name=name).first()
         if actor is None:
-            actor = Actor(_name=name, _formatted_name=format_string(name))
+            formatted_name = format_string(name)
+            actor = Actor(_name=name, _formatted_name=formatted_name)
             actor.save()
         actors.append(actor)
     return actors
 
 def convert_to_metadata(imdb_id, runtime):
-    # movie metadata
     metadata = Metadata(_imdb_id=imdb_id, _runtime=runtime,
         _date_added=datetime.now())
     return metadata
@@ -62,64 +61,42 @@ def convert_review_json_to_obj(reviews):
         list_of_reviews.append(new_review)
     return list_of_reviews
 
-@celery.task(name='movie_crawler.index_movie', ignore_result=True,
-    queue="movie_crawler")
-def index_movie(movie):
-    USERNAME = settings.Config.SW_EMAIL
-    PASSWORD = settings.Config.SW_PASSWORD
-    API_KEY = settings.Config.SW_API_KEY
-    SW_ENGINE_SLUG = settings.Config.SW_ENGINE_SLUG
-    client = swiftype.Client(username=USERNAME, password=PASSWORD,
-                api_key=API_KEY)
+def convert_similar_movies_to_imdb_ids(similar_movies):
+    similar_movies_imdb_ids = []
+    for similar_movie in similar_movies:
+        try:
+            imdb_id = 'tt' + similar_movie['alternate_ids']['imdb']
+            similar_movies_imdb_ids.append(imdb_id)
+        except KeyError:
+            continue
+        except Exception as e:
+            print e
+            continue
+    return similar_movies_imdb_ids
 
-    # need to format some of the data so we can save it in swyftype
-    cast = [cast.name for cast in movie.cast]
-    release_date = str(movie.release_date)
-    release_year = release_date.split('-')[0]
-    title = "{title} ({year})".format(title=movie.title, year=release_year)
-    print "indexing {title}".format(title=title)
-    try:
-        client.create_document(SW_ENGINE_SLUG, 'trailer', {
-            'external_id':  movie.formatted_title,
-            'fields': [
-                {'name': 'title', 'value': movie.title, 'type': 'string'},
-                {'name': 'cast', 'value': cast, 'type': 'enum'},
-                {'name': 'genres', 'value': movie.genres, 'type': 'enum'},
-                {'name': 'synopsis', 'value': movie.synopsis, 'type': 'text'},
-                {'name': 'critic score', 'value': movie.critics_score, 'type': 'integer'},
-                {'name': 'release_date', 'value': release_date, 'type': 'date'},
-                {'name': 'runtime', 'value': movie.metadata.runtime, 'type': 'integer'},
-                {'name': 'url', 'value': movie.url, 'type': 'enum'},
-            ]
-        })
-    except:
-        print "couldn't index {title}".format(title=title)
-        pass
+def update_actors(actors, movie, verbose=False):
+    '''
+    update the cast's filmography and potentially biography
+    and headshot
+    '''
+
+    for actor in actors:
+        if verbose:
+            print "updating actor {name}".format(name=actor.name)
+        actor.update(add_to_set___filmography=movie.id)
+        if actor.biography is None and actor.picture is None:
+            update_actor_bio_and_picture(actor.name, verbose=True)
+
 
 @celery.task(name='movie_crawler.save_movie_info_to_mongo', ignore_result=True,
     queue="movie_crawler", rate_limit="2/m")
 def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
-    # TODO CHLEE:
-    # 0000) need to conver genres to lowercase - done
-    # 000) yt search returns videos with the same length for iron man - done
-    # 00) Poster mistach from themoviedb - done
-    # 0) No synopsis from rottentomatoe - done
-    # 1) Make movie_crawler more modular and robust, so it doesn't depend
-    # on settings or models from movie_trailers
-    # 2) Make the functions creat_thumbnails and index_movie async tasks, so
-    # that it doesn't block save_movie_info_to_mongo - done
-    # 3) Need to make sure that the results returned by tmdb
-    # is sorted by the differnece in days between this movie - done
-    # and the expected release date
-    # various API keys
     AWS_ACCESS_KEY = settings.Config.AWS_ACCESS_KEY
     AWS_SECRET_KEY = settings.Config.AWS_SECRET_KEY
     AWS_AFFILIATE_KEY = settings.Config.AWS_AFFILIATE_KEY
     ROTTEN_TOMATOES_API_KEY = settings.Config.ROTTEN_TOMATOES_API_KEY
     TMDB_API_KEY = settings.Config.TMDB_API_KEY
 
-    # ignore request, we have previously stored this movie's information
-    # in our DB
     if Movie.objects(_title=title).first() is not None:
         return
 
@@ -146,28 +123,16 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
     
     # formatting some raw data into more complex sets of data
     actors = convert_cast_json_to_obj(cast)
+    amazon_purchase_links = convert_amazon_purchase_link_json_to_obj(
+        amazon_purchase_links)
     formatted_director = format_string(movie.director)
     formatted_title = format_string(title)
     reviews = convert_review_json_to_obj(reviews)
     metadata = convert_to_metadata(imdb_id, runtime)
-    amazon_purchase_links = convert_amazon_purchase_link_json_to_obj(
-                                amazon_purchase_links)
-    similar_movies_imdb_ids = []
-    for similar_movie in similar_movies:
-        try:
-            imdb_id = 'tt' + similar_movie['alternate_ids']['imdb']
-            similar_movies_imdb_ids.append(imdb_id)
-        except Exception as e:
-            '''
-            CHLEE TODO:
-            Is it possible to retrieve imdb keys for similar movies that
-            rt can't find imdb keys for?
-            '''
-            print similar_movie
-            continue
-    
     thumbnail = create_thumbnail(formatted_title, poster, verbose=True)
-    
+    similar_movies_imdb_ids = convert_similar_movies_to_imdb_ids(
+        similar_movies)
+
     print "saving {title}".format(title=title)
     new_movie = Movie(_director=director,
                         _formatted_director=formatted_director,
@@ -180,18 +145,12 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                         _trailers=trailers,
                         _purchase_links=amazon_purchase_links)
     new_movie.save()
-
-    # index this movie in swyftype
-    index_movie(new_movie)
-
-    # update the cast's filmography
-    print "updating actor"
-    for actor in actors:
-        actor.update(add_to_set___filmography=new_movie.id)
+    index_movie(new_movie, verbose=True)
+    update_actors(actors, new_movie, verbose=True)
 
     # save this movie's similar movies to mongo
     if save_similar_movies:
-        for similar_movie in movie.similar_movies:
+        for similar_movie in new_movie.similar_movies:
             title = similar_movie['title']
             rt_id = similar_movie['id']
             save_movie_info_to_mongo.delay(title, rt_id=rt_id, 

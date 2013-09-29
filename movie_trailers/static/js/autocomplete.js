@@ -143,6 +143,8 @@
         $this.listResults().removeClass(config.activeItemClass);
         if (nextIdx >= 0) {
           next.addClass(config.activeItemClass);
+          if (next.text() !== "")
+            $("#st-search-input").val(next.text());
         }
       };
 
@@ -154,6 +156,8 @@
         $this.listResults().removeClass(config.activeItemClass);
         if (nextIdx >= 0) {
           next.addClass(config.activeItemClass);
+          if (next.text() !== "")
+            $("#st-search-input").val(next.text());
         }
       };
 
@@ -229,6 +233,8 @@
           event.preventDefault();
           if ($active.length === 0) {
             $this.listResults().last().addClass(config.activeItemClass);
+            if ($this.listResults().last().text() !== "")
+              $("#st-search-input").val($this.listResults().last().text());
           } else {
             $this.prevResult();
           }
@@ -237,6 +243,8 @@
           event.preventDefault();
           if ($active.length === 0) {
             $this.listResults().first().addClass(config.activeItemClass);
+            if ($this.listResults().first().text() !== "")
+              $("#st-search-input").val($this.listResults().first().text());
           } else if ($active != $this.listResults().last()) {
             $this.nextResult();
           }

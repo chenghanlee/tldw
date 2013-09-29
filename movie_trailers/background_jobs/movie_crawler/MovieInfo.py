@@ -145,13 +145,13 @@ class MovieInfo(object):
     @property
     def trailers(self, limit=3):
         '''
-        This function returns a list of trailers related to this movie.
+        This function returns a list of trailers for this movie.
         
         We will use TMDB's data if it returns  3 or more trailers. If not,
         we will query youtube with the search term: "{movie_name} trailer
-        {release_year}" to find the trailers.
+        {release_year}" to find trailers for this movie.
 
-        Returns a list of youtube ids of the trailers on youtube
+        Returns a list of youtube ids of the trailers
         '''
         trailers = self._tmdb_data.get_trailers()['youtube']
         if len(trailers) > limit:
@@ -163,39 +163,41 @@ class MovieInfo(object):
                             title=self._movie, release_year=release_year)
             query.orderby = 'relevance'
             feed = self._yt_service.YouTubeQuery(query)
-            return self._remove_duplicate_yt_videos(feed)
+            entries = self._remove_long_youtube_videos(feed.entry[:3])
+            return self._remove_duplicate_youtube_videos(entries)
             
-    def _remove_duplicate_yt_videos(self, feed, threshold=10):
+    def _remove_duplicate_youtube_videos(self, entries, threshold=5):
         '''
         This method removes duplicate videos by measuring the runtime
-        of the videos in feed.
+        of the youtube videos.
 
-        If two videos are within 10 seconds of each other in runtime, 
-        we assume that one of the videos is a duplicate of the other.
+        If two videos are within 5 seconds (the threshold) of each
+        other in runtime,  we assume that one of the videos is a duplicate
+        of the other.
         '''
-        videos = []
-        # if the video is longer than 10 minutes, its probably not a trailer
         limit = 3
-        max_seconds = 600
-        entries = filter(lambda x: x.media.duration.seconds < max_seconds,
-                    feed.entry[:limit])
+        videos = []
         for entry in entries:
-            video_id = self._extract_youtube_id(entry.media.player.url)
             runtime = int(entry.media.duration.seconds)
             similar = [runtime >= int(video["runtime"]) - threshold and
-                        runtime <= int(video["runtime"]) + threshold for
-                        video in videos]
+                       runtime <= int(video["runtime"]) + threshold for
+                       video in videos]
             if not any(similar):
-                videos.append({"yt_id": video_id, "runtime":runtime})
-        youtube_ids = [video['yt_id'] for video in videos]
-        return youtube_ids
+                video_id = self._extract_youtube_id(entry.media.player.url)
+                videos.append({"yt_id": video_id, "runtime": runtime})
+        yt_ids = [video['yt_id'] for video in videos]
+        return yt_ids
+
+    def _remove_long_youtube_videos(self, entries, max_seconds=600):
+        entries = filter(lambda entry:
+                            int(entry.media.duration.seconds) < max_seconds,
+                            entries)
+        return entries
 
     def _extract_youtube_id(self, youtube_url):
         video_id = youtube_url.split('v=')[1]
         ampersand_position = video_id.find('&')
         if(ampersand_position != -1):
           video_id = video_id[0:ampersand_position]
-        return video_id
 
-    def save_to_swyftype(self):
-        pass
+        return video_id
