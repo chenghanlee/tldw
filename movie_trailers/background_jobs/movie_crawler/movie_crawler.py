@@ -151,7 +151,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
 
     # save this movie's similar movies to mongo
     if save_similar_movies:
-        for similar_movie in new_movie.similar_movies:
+        for similar_movie in similar_movies:
             title = similar_movie['title']
             rt_id = similar_movie['id']
             save_movie_info_to_mongo.delay(title, rt_id=rt_id, 
