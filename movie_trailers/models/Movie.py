@@ -116,9 +116,12 @@ class Movie(db.Document, object):
     _trailers = db.ListField(db.StringField())
     _purchase_links=db.ListField(db.EmbeddedDocumentField(PurchaseLink))
 
-    meta = {'indexes': ['_formatted_title', '_metadata._imdb_id', '_director', '_id',
-                        '-_critics_score', '-_release_date', '-_views._date',
+    meta = {'indexes': ['-_critics_score', '_director', 
+                        '_formatted_title', '_id',
+                        '-_release_date', '-_trending_score',
+                        '-_metadata._date_added', '_metadata._imdb_id',
                         ('_genres', '-_critics_score'),
+                        ('_genres', '-_metadata._date_added'),
                         ('_genres', '-_release_date'),
                         ('_genres', '-_trending_score')]}
 
@@ -256,13 +259,21 @@ class Movie(db.Document, object):
 class Actor(db.Document):
     _name = db.StringField(unique=True)
     _biography = db.StringField(default=None)
-    _headshot = db.StringField(default=None)
+    _picture = db.StringField(default=None)
     _formatted_name = db.StringField(unique=True)
 
     _filmography = db.ListField(db.ObjectIdField(Movie))
     
     meta = {'indexes': ['_id', '_formatted_name']}
     
+    @property
+    def biography(self):
+        return self._biography
+
+    @property
+    def picture(self):
+        return self._picture
+
     @property
     def name(self):
         return self._name
@@ -282,8 +293,8 @@ class Actor(db.Document):
         return actor
 
     def filmography(self, page, sort, movies_per_page=32):
-        sort_by = {'newest': '-_release_date', 'best': '-_critics_score'
-                    }.get(sort, '-_metadata._updated')
+        sort_by = {'newest': '-_release_date',
+                   'best': '-_critics_score'
+                   }.get(sort, '-_metadata._updated')
         cursor = Movie.objects.filter(id__in=self._filmography).order_by(sort_by)
         return cursor
-            
