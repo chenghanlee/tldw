@@ -69,7 +69,7 @@ def index_movie(movie, verbose=False):
     except:
         print "couldn't index {title}".format(title=title)
 
-@celery.task(name='movie_crawler.update_actor_bio_and_picture', ignore_result=True,
+@celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
     queue="actor_crawler", rate_limit="10/m")
 def update_actor_bio_and_picture(name, verbose=False):
     if verbose:
