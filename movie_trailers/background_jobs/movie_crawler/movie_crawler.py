@@ -15,7 +15,7 @@ from tasks import create_thumbnail, index_movie, update_actor_bio_and_picture
 celery = Celery("movie_crawler.tasks")
 celery.config_from_object(settings.CeleryConfig)
 db_conn_settings = dict([(k.lower(), v) for k, v in
-                    settings.DevConfig.MONGODB_SETTINGS.items() if v])
+                    settings.ProdConfig.MONGODB_SETTINGS.items() if v])
 db.connect(**db_conn_settings)
 
 def convert_amazon_purchase_link_json_to_obj(purchase_links):
