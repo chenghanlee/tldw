@@ -55,5 +55,9 @@ class CeleryConfig(Config):
             'exchange': 'movie_crawler',
             'routing_key': 'movie_crawler',
         }
+        'actor_crawler': {
+            'exchange': 'movie_crawler',
+            'routing_key': 'actor_crawler',
+        }
     }
     # CELERYD_PREFETCH_MULTIPLIER = 0
