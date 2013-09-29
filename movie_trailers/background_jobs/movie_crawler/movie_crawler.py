@@ -83,9 +83,10 @@ def update_actors(actors, movie, verbose=False):
     for actor in actors:
         if verbose:
             print "updating actor {name}".format(name=actor.name)
+            
         actor.update(add_to_set___filmography=movie.id)
         if actor.biography is None and actor.picture is None:
-            update_actor_bio_and_picture(actor.name, verbose=True)
+            update_actor_bio_and_picture.delay(actor.name, verbose=True)
 
 
 @celery.task(name='movie_crawler.save_movie_info_to_mongo', ignore_result=True,

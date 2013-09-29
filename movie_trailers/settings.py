@@ -41,7 +41,6 @@ class CeleryConfig(Config):
     }
     BROKER_USER = Config.AWS_ACCESS_KEY
     BROKER_PASSWORD = Config.AWS_SECRET_KEY
-    CELERY_DEFAULT_RATE_LIMIT = '1/m'
     CELERY_DEFAULT_QUEUE = 'default'
     CELERY_QUEUES = {
         'default': {
