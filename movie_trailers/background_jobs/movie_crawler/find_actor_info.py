@@ -23,7 +23,11 @@ def _make_soup(html):
 	return BeautifulSoup(html)
 
 def _find_bio(soup):
-	bio = soup.find("p", "tp_icdf").text
+	bio = soup.find("p", "tp_icdf")
+	if bio is None:
+		return None
+
+	bio = bio.text
 	if len(bio) < 50:
 		return None
 	else:
