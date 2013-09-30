@@ -158,5 +158,5 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                 save_similar_movies=True)
     
 if __name__ == "__main__":
-    title = "Iron Man"
+    title = "Toy Story 3"
     save_movie_info_to_mongo(title, save_similar_movies=True)

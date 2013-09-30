@@ -70,11 +70,8 @@ def index_movie(movie, verbose=False):
         print "couldn't index {title}".format(title=title)
 
 @celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
-    queue="actor_crawler", rate_limit="10/m")
+    queue="actor_crawler", rate_limit="6/m")
 def update_actor_bio_and_picture(name, verbose=False):
-    if verbose:
-        print "finding biography and picture for {name}".format(name=name)
-
     info = find_actor_info(name)
     bio = info['bio']
     image_url = info['image_url']
@@ -89,3 +86,7 @@ def update_actor_bio_and_picture(name, verbose=False):
         s3_url = "http://s3.amazonaws.com/tldw/" + s3_url
         os.remove(filename)
         Actor.objects(_name=name).update_one(set___picture=s3_url)
+
+    if verbose:
+        print "{name}\nbigraphy: {bio}\npicture: {image_url}".format(
+            name=name, bio=bio, image_url=image_url)
