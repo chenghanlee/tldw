@@ -79,8 +79,7 @@ def update_actor_bio_and_picture(name, verbose=False):
     image_url = info['image_url']
 
     if bio:
-        if isinstance(bio, unicode):
-            bio = bio.encode('ascii','ignore')
+        bio = bio.encode('utf-8')
         Actor.objects(_name=name).update_one(set___biography=bio)
 
     if image_url:

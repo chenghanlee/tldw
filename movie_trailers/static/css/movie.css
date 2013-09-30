@@ -52,6 +52,49 @@ footer {
 	font-weight: 700;
 }
 
+
+/* colors */
+.grey{
+	color: #999;
+}
+
+.light-grey{
+	color: #f1f1f1;
+}
+
+.orange{
+	color: #E6563A;
+}
+
+/* buttons */
+
+
+a.button {
+	display: block;
+	padding: 15px 0;
+	width: 220px;
+	margin-bottom: 20px;
+	color: #222;
+	font-size: 16px;
+	text-align: center;
+	text-decoration: none;
+
+	background: transparent;
+	border: 2px solid #222;
+	cursor: pointer;
+	
+	-webkit-transition: all .2s ease-in;
+	-moz-transition: all .2s ease-in;
+	-ms-transition: all .2s ease-in;
+	-o-transition: all .2s ease-in;
+	transition: all .2s ease-in;
+}
+
+a.button:hover {
+	text-decoration: none;
+	border: 2px solid #E6563A;
+}
+
 /* logo */
 .logo{
 	height: 60px;
@@ -80,19 +123,6 @@ footer {
 
 .logo > a:hover{
 	color: #222;
-}
-
-/* colors */
-.grey{
-	color: #999;
-}
-
-.light-grey{
-	color: #f1f1f1;
-}
-
-.orange{
-	color: #E6563A;
 }
 
 /* navbar */
