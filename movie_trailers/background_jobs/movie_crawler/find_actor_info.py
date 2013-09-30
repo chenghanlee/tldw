@@ -6,8 +6,9 @@ from urllib import urlencode
 from upload_to_s3 import download_image, upload_to_s3
 
 def find_actor_info(name):
+	query = "{name} actor".format(name=name)
 	url = "http://www.bing.com/search?{query}".format(
-		query=urlencode({"q": name}))
+		query=urlencode({"q": query}))
 	html = _bing_search(url)
 	soup = _make_soup(html)
 	

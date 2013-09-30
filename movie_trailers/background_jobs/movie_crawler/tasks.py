@@ -72,11 +72,15 @@ def index_movie(movie, verbose=False):
 @celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
     queue="actor_crawler", rate_limit="6/m")
 def update_actor_bio_and_picture(name, verbose=False):
+    # TODO CHLEE:
+    # bug #2: can't find actor information for Tom Hanks and Tim allen
     info = find_actor_info(name)
     bio = info['bio']
     image_url = info['image_url']
 
     if bio:
+        if isinstance(bio, unicode):
+            bio = bio.encode('ascii','ignore')
         Actor.objects(_name=name).update_one(set___biography=bio)
 
     if image_url:
