@@ -71,16 +71,15 @@ footer {
 
 a.button {
 	display: block;
-	padding: 15px 0;
-	width: 220px;
-	margin-bottom: 20px;
+	padding: 10px 0;
+	width: 136px;
 	color: #222;
-	font-size: 16px;
+	font-size: 13px;
 	text-align: center;
 	text-decoration: none;
 
 	background: transparent;
-	border: 2px solid #222;
+	border: 2px solid #E6563A;
 	cursor: pointer;
 	
 	-webkit-transition: all .2s ease-in;
@@ -91,8 +90,9 @@ a.button {
 }
 
 a.button:hover {
+	background: #E6563A;
+	color: white;
 	text-decoration: none;
-	border: 2px solid #E6563A;
 }
 
 /* logo */
@@ -153,6 +153,13 @@ form.form-search{
 input.search-query{
 	border: 0;
 	height: 60px;
+}
+
+/* actor portrait*/
+
+.portrait{
+	border: 1px solid #ccc;
+	margin-bottom: 20px;
 }
 
 /* Thumbnails */

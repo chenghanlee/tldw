@@ -74,6 +74,7 @@ def index_movie(movie, verbose=False):
 def update_actor_bio_and_picture(name, verbose=False):
     # TODO CHLEE:
     # bug #2: can't find actor information for Tom Hanks and Tim allen
+    # nee to stop repeat finds
     info = find_actor_info(name)
     bio = info['bio']
     image_url = info['image_url']

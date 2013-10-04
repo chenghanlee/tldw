@@ -1,10 +1,8 @@
 // "use strict";
 
 var Trailer = function() {
-    var synopsis = "p#synopsis";
-
-    function reduceSynopsis(maxLength){
-        var minimized_elements = $(synopsis);
+    function reduceText(tag, maxLength){
+        var minimized_elements = $(tag);
         minimized_elements.each(function(){    
             var t = $(this).text();        
             if(t.length < maxLength)
@@ -31,7 +29,7 @@ var Trailer = function() {
     }
 
     return{
-        reduceSynopsis: reduceSynopsis
+        reduceText: reduceText
     };
 }();
 
@@ -67,5 +65,6 @@ var SwyftType = function () {
 
 $(document).ready(function() {    
     SwyftType.autoComplete();
-    Trailer.reduceSynopsis(350);
+    Trailer.reduceText("p#biography", 110);
+    Trailer.reduceText("p#synopsis", 350);
 });

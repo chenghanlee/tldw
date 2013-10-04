@@ -34,12 +34,15 @@ class AmazonProductSearch():
         except Exception as e:
             print e
             return []
-
-        bindings_seen = {"DVD": False, "Blu-ray": False,
-                        "Amazon Instant Video": False}
-        max_running_time_diff = 5
+        
         rv = []
+        max_running_time_diff = 5
+        bindings_seen = {"DVD": False, "Blu-ray": False,
+                         "Amazon Instant Video": False}
 
+        # CHLEE TODO:
+        # Check result title against title using fuzzywuzzy and skip
+        # if less than 80% match
         for result in results:
             try:
                 if all(bindings_seen.values()):

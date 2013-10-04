@@ -2,7 +2,7 @@
 
 {% import 'gallery_helper.html' as helper %}
 
-{% block sidebar %}
+{% block left_sidebar %}
   <p><b>Sort by</b></p>
 	<ul class="unstyled">
 		{{ helper.render_sort_links(g.current_genre, g.possible_sorts, g.current_sort) }}

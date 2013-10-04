@@ -53,6 +53,10 @@
   background-color: #f1f1f1;
 }
 
+.swiftype-widget .autocomplete li.active p.title{
+  color: #0088cc;
+}
+
 .swiftype-widget .autocomplete li p {
   font-size: 15px;
   line-height: 21px;
@@ -61,5 +65,5 @@
 }
 
 .swiftype-widget .autocomplete li p.title {
-  color: #0088cc;
+  color: #222;
 }

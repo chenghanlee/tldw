@@ -11,8 +11,11 @@
   <div class="row">
     <div class="span 10">
       <div class="row"> 
-        <div class="span8 offset2">
+        <div class="span6 offset2">
           <h1 class="title">{{ movie.title }} ({{ movie.release_date.year }})</h1>
+        </div>
+        <div class="span2">
+          <a class="button" href="">Watch Full Movie</a>
         </div>
       </div>
     </div>
@@ -26,6 +29,7 @@
             <ul class="unstyled trailer-links">
               {% if movie.trailers|length > 0 %}
                 {{ helper.render_trailer_links(movie, current_index) }}
+
               {% else %}
                 <li>No trailers</li>
               {% endif %}
@@ -40,7 +44,6 @@
           <hr>
             {% if youtube_id %}
               <iframe class="player" width="620" height="370" src="http://www.youtube.com/embed/{{ youtube_id }}?rel=0&iv_load_policy=3&modestbranding=1" frameborder="0" allowfullscreen></iframe>
-              <a class="button" href="{{ movie.purchase_links.get('Amazon Instant Video') }}" target="_blank">Watch Full Movie &nbsp;&nbsp;<i class="icon-play"></i></a>
             {% else %}
               <h5>No Trailer Available</h5>
             {% endif %}

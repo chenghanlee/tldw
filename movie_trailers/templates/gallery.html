@@ -7,20 +7,24 @@
 
 {% block content %}
   <div class="row">
-    <div class="span8 offset2">
+    <div class="span6 offset2">
       <h1 class="title">{{ g.title | title }} Movie Trailers</h1>
     </div>
   </div>
   <div class="row">
     <div class="span2">
       <hr>
-      {% block sidebar %}
+      {% block left_sidebar %}
       {% endblock %}
       <hr>
     </div>
     <div class="span8">
       <hr>
       {% block gallery %}
+      {% endblock %}
+    </div>
+    <div class="span2">
+      {% block right_sidebar %}
       {% endblock %}
     </div>
   </div>

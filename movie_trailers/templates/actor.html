@@ -2,7 +2,7 @@
 
 {% import 'actor_helpers.html' as helper %}
 
-{% block sidebar %}
+{% block left_sidebar %}
   <p><b>Sort by</b></p>
   <ul class="unstyled">
     {{ helper.render_sort_links(g.actor, g.possible_sorts, g.current_sort) }}
@@ -17,6 +17,18 @@
   </ul>
 {% endblock %}
 
+{% block right_sidebar %}
+  {% if g.actor.biography %}
+    <hr>
+    {% if g.actor.picture %}
+      <img class="portrait" src="{{ g.actor.picture }}" alt="{{ g.actor.name }}">
+    {% endif %}
+    <p><b>{{ g.actor.name }}</b></p>
+    <p id="biography">{{ g.actor.biography }}</p>
+    <hr>
+  {% endif %}
+{% endblock %}
+
 {% block footer %}
   <div class="span8 offset2">
     <div class="row">
@@ -28,4 +40,5 @@
       </div>
     </div>
     <hr>
-  </div>{% endblock %}
+  </div>
+{% endblock %}
