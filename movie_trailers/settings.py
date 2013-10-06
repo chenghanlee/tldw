@@ -11,7 +11,7 @@ class Config(object):
     SW_ENGINE_SLUG = 'tldw'
 
     #API
-    ROTTEN_TOMATOES_API_KEY = 'n298xcf5bkxf4qtnbmw7364x'
+    ROTTEN_TOMATOES_API_KEY = 'psnmyahggacddrxj2xrx6b73'
     TMDB_API_KEY = 'f43cd8f01703edd5a67e40027e5d4055'
 
     # AWS
