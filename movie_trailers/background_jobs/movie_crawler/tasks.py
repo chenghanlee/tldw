@@ -75,8 +75,9 @@ def update_actor_bio_and_picture(name, verbose=False):
     # TODO CHLEE:
     # bug #2: can't find actor information for Tom Hanks and Tim allen
     # need to stop repeat finds
-    if Actor.objects(_name=name).first() is not None:
-        print "{name} has wanted info, returning".format(name=name)
+    actor = Actor.objects(_name=name).first() 
+    if actor.biography or actor.picture:
+        print "{name} has bio and/or picture, returning".format(name=name)
         return
 
     info = find_actor_info(name)
