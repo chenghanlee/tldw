@@ -5,7 +5,6 @@ Rotten Tomatoes API:  http://developer.rottentomatoes.com/
 
 Main file for interacting with the Rotten Tomatoes API.
 """
-
 from urllib import urlencode
 
 try:

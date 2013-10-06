@@ -70,11 +70,15 @@ def index_movie(movie, verbose=False):
         print "couldn't index {title}".format(title=title)
 
 @celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
-    queue="actor_crawler", rate_limit="6/m")
+    queue="actor_crawler", rate_limit="30/m")
 def update_actor_bio_and_picture(name, verbose=False):
     # TODO CHLEE:
     # bug #2: can't find actor information for Tom Hanks and Tim allen
-    # nee to stop repeat finds
+    # need to stop repeat finds
+    if Actor.objects(_name=name).first() is not None:
+        print "{name} has wanted info, returning".format(name=name)
+        return
+
     info = find_actor_info(name)
     bio = info['bio']
     image_url = info['image_url']

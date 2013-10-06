@@ -1,4 +1,5 @@
 from amazonproduct.api import API
+from fuzzywuzzy import fuzz
 from lxml import etree
 
 class AmazonProductSearch():
@@ -14,7 +15,7 @@ class AmazonProductSearch():
         return product
 
     def item_search(self, title, actor, expected_running_time,
-            ResponseGroup='OfferFull, Medium'):
+            ResponseGroup='OfferFull, Medium', release_year=None):
         '''
         This method searches Amazon for DVD, Blu-ray, and/or Amazon Instant
         Video listings of the movie that we are searching. Actor and running
@@ -36,24 +37,35 @@ class AmazonProductSearch():
             return []
         
         rv = []
+        max_release_year_diff = 1
         max_running_time_diff = 5
         bindings_seen = {"DVD": False, "Blu-ray": False,
                          "Amazon Instant Video": False}
 
-        # CHLEE TODO:
-        # Check result title against title using fuzzywuzzy and skip
-        # if less than 80% match
         for result in results:
+            etree.tostring(result, pretty_print=True)
             try:
                 if all(bindings_seen.values()):
                     return rv
-                if abs(expected_running_time - result.ItemAttributes.RunningTime
-                    ) <= max_running_time_diff:
-                    binding = result.ItemAttributes.Binding
-                    if (binding in bindings_seen.keys() and 
-                        not bindings_seen.get(binding)):
-                        rv.append(self._create_product(result))
-                        bindings_seen[binding] = True
+
+                result_binding = str(result.ItemAttributes.Binding)
+                result_release_year = int(str(result.ItemAttributes.ReleaseDate).split('-')[0])
+                result_running_time = int(result.ItemAttributes.RunningTime)
+                result_title = str(result.ItemAttributes.Title)
+                
+                if fuzz.partial_ratio(title.lower(), result_title.lower()) < 100:
+                    continue
+                if release_year is not None and abs(release_year - result_release_year) > max_release_year_diff:
+                    continue
+                if abs(expected_running_time - result_running_time) > max_running_time_diff:
+                    continue
+                if result_binding not in bindings_seen.keys():
+                    continue
+                if bindings_seen.get(result_binding):
+                    continue
+
+                rv.append(self._create_product(result))
+                bindings_seen[result_binding] = True
             except Exception as e:
                 print e
                 continue
