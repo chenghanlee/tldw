@@ -72,11 +72,8 @@ def index_movie(movie, verbose=False):
 @celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
     queue="actor_crawler", rate_limit="30/m")
 def update_actor_bio_and_picture(name, verbose=False):
-    # TODO CHLEE:
-    # bug #2: can't find actor information for Tom Hanks and Tim allen
-    # need to stop repeat finds
     actor = Actor.objects(_name=name).first() 
-    if actor.biography or actor.picture:
+    if actor is None or actor.biography or actor.picture:
         print "{name} has bio and/or picture, returning".format(name=name)
         return
 
