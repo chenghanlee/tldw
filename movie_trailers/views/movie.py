@@ -77,10 +77,14 @@ def show_trailer(movie_name, index=1):
     middle = len(reviews)/2
     reviews_in_left_column = reviews[0::2]
     reviews_in_right_column = reviews[1::2]
+    one_click_purchase_link = movie.purchase_links.get("Amazon Instant Video") or \
+                              movie.purchase_links.get("DVD") or \
+                              movie.purchase_links.get("Blu-ray") 
     rv = render_template("trailer.html", movie=movie, current_index=index,
                             youtube_id=youtube_id, reviews=reviews, 
                             reviews_in_left_column=reviews_in_left_column,
-                            reviews_in_right_column=reviews_in_right_column)
+                            reviews_in_right_column=reviews_in_right_column,
+                            one_click_purchase_link=one_click_purchase_link)
     inc_view_count.delay(formatted_title=movie_name)
     redis.hset(key, index, rv)
     redis.expire(key, TTL)

@@ -15,7 +15,9 @@
           <h1 class="title">{{ movie.title }} ({{ movie.release_date.year }})</h1>
         </div>
         <div class="span2">
-          <a class="button" href="">Watch Full Movie</a>
+          {% if one_click_purchase_link %}
+            <a class="button" href="{{ one_click_purchase_link }}" target="_blank">Watch Full Movie</a>
+          {% endif %}
         </div>
       </div>
     </div>

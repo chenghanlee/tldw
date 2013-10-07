@@ -65,5 +65,11 @@
 }
 
 .swiftype-widget .autocomplete li p.title {
-  color: #222;
+  color: #0088cc;
+}
+
+.swiftype-widget .autocomplete li p.sub-title {
+  color: #555;
+  font-size: 13px;
+  font-weight: normal;
 }

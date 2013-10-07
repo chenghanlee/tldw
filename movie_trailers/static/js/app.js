@@ -38,7 +38,8 @@ var SwyftType = function () {
     var numResults = 8,
     	engineKey = "TqkNebr4pzvBxHTe7p6A",
     	searchBox = "#st-search-input",
-    	searchResultTitle = _.template("<p class='title'><%= title %> (<%= year %>)</p>");
+    	searchResultTitle = _.template("<p class='title'><%= title %> (<%= year %>)</p>"),
+        searchResultSubTitle = _.template("<p class='sub-title'><%= castOne %> &middot; <%= castTwo %> &middot; <%= castThree %></p>");
 
     function autoComplete() {
 		$(searchBox).swiftype({ 
@@ -52,10 +53,17 @@ var SwyftType = function () {
 
     var _customRenderFunction = function(document_type, item) {
     	var title = item['title'],
+            numCast = _.size(item['cast']),
+            castOne = (numCast >= 1) ? item['cast'][0] : null,
+            castTwo = (numCast >= 2) ? item['cast'][1] : null,
+            castThree = (numCast >= 3) ? item['cast'][2] : null,
     		releaseYear = item['release_date'].split('-')[0];
 
-    	var searhResult = searchResultTitle({'title': title, 'year': releaseYear});
-    	return searhResult;
+    	var searchResult = searchResultTitle({'title': title, 'year': releaseYear});
+        var searchSubResult = searchResultSubTitle({'castOne': castOne,
+                                                     'castTwo': castTwo,
+                                                     'castThree': castThree});
+    	return searchResult.concat(searchSubResult);
 	};
 
     return{

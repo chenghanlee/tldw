@@ -143,8 +143,9 @@
         $this.listResults().removeClass(config.activeItemClass);
         if (nextIdx >= 0) {
           next.addClass(config.activeItemClass);
-          if (next.text() !== "")
-            $("#st-search-input").val(next.text());
+          if (next.text() !== ""){
+            $("#st-search-input").val(next.find(".title").text());
+          }
         }
       };
 
@@ -156,8 +157,9 @@
         $this.listResults().removeClass(config.activeItemClass);
         if (nextIdx >= 0) {
           next.addClass(config.activeItemClass);
-          if (next.text() !== "")
-            $("#st-search-input").val(next.text());
+          if (next.text() !== ""){
+            $("#st-search-input").val(next.find(".title").text());
+          }
         }
       };
 
@@ -234,7 +236,7 @@
           if ($active.length === 0) {
             $this.listResults().last().addClass(config.activeItemClass);
             if ($this.listResults().last().text() !== "")
-              $("#st-search-input").val($this.listResults().last().text());
+              $("#st-search-input").val($this.listResults().last().find(".title").text());
           } else {
             $this.prevResult();
           }
@@ -244,7 +246,7 @@
           if ($active.length === 0) {
             $this.listResults().first().addClass(config.activeItemClass);
             if ($this.listResults().first().text() !== "")
-              $("#st-search-input").val($this.listResults().first().text());
+              $("#st-search-input").val($this.listResults().first().find(".title").text());
           } else if ($active != $this.listResults().last()) {
             $this.nextResult();
           }
