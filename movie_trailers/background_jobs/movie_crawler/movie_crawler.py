@@ -160,5 +160,5 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "World War Z"
+    title = "Pacific Rim"
     save_movie_info_to_mongo(title, save_similar_movies=True)
