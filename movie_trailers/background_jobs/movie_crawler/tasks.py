@@ -61,7 +61,7 @@ def index_movie(movie, verbose=False):
                 {'name': 'genres', 'value': movie.genres, 'type': 'enum'},
                 {'name': 'synopsis', 'value': movie.synopsis, 'type': 'text'},
                 {'name': 'critic score', 'value': movie.critics_score, 'type': 'integer'},
-                {'name': 'release_date', 'value': release_date, 'type': 'date'},
+                {'name': 'release_date', 'value': movie.release_date, 'type': 'date'},
                 {'name': 'runtime', 'value': movie.metadata.runtime, 'type': 'integer'},
                 {'name': 'url', 'value': movie.url, 'type': 'enum'},
             ]
