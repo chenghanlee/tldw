@@ -66,8 +66,9 @@ def index_movie(movie, verbose=False):
                 {'name': 'url', 'value': movie.url, 'type': 'enum'},
             ]
         })
-    except:
+    except Exception as e:
         print "couldn't index {title}".format(title=title)
+        print e
 
 @celery.task(name='actor_crawler.update_actor_bio_and_picture', ignore_result=True,
     queue="actor_crawler", rate_limit="30/m")
