@@ -35,12 +35,15 @@ def convert_amazon_purchase_link_json_to_obj(purchase_links):
 def convert_cast_json_to_obj(casts):
     actors = []
     for name in casts:
-        actor = Actor.objects(_name=name).first()
-        if actor is None:
-            formatted_name = format_string(name)
-            actor = Actor(_name=name, _formatted_name=formatted_name)
-            actor.save()
-        actors.append(actor)
+        try:
+            actor = Actor.objects(_name=name).first()
+            if actor is None:
+                formatted_name = format_string(name)
+                actor = Actor(_name=name, _formatted_name=formatted_name)
+                actor.save()
+            actors.append(actor)
+        except Exception as e:
+            continue
     return actors
 
 def convert_to_metadata(imdb_id, runtime):
@@ -162,9 +165,14 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    url = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
-    top_dvds = json.loads(requests.get(url).text)
-    print top_dvds
-    for movie in top_dvds.get('movies'):
-        print movie.get("title")
-        save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
+    title = "Pushing Tin"
+    save_movie_info_to_mongo.delay(title, save_similar_movies=True)
+
+    # for movie in Movie.objects().order_by("-_metadata._date_added"):
+    #     index_movie(movie)
+    # url = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    # top_dvds = json.loads(requests.get(url).text)
+    # print top_dvds
+    # for movie in top_dvds.get('movies'):
+    #     print movie.get("title")
+    #     save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
