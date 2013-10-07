@@ -157,7 +157,8 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             rt_id = similar_movie['id']
             save_movie_info_to_mongo.delay(title, rt_id=rt_id, 
                 save_similar_movies=True)
+            print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Lone Ranger"
+    title = "World War Z"
     save_movie_info_to_mongo(title, save_similar_movies=True)
