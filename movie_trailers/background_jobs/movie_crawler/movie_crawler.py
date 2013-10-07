@@ -99,6 +99,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
     TMDB_API_KEY = settings.Config.TMDB_API_KEY
 
     if Movie.objects(_title=title).first() is not None:
+        print "{title}found in db".format(title=title)
         return
 
     print "searching {title}".format(title=title)
@@ -158,5 +159,5 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
                 save_similar_movies=True)
     
 if __name__ == "__main__":
-    title = "Toy Story 3"
+    title = "Lone Ranger"
     save_movie_info_to_mongo(title, save_similar_movies=True)
