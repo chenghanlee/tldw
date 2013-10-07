@@ -2,7 +2,9 @@ import sys
 sys.path.append("../../../movie_trailers")
 sys.path.append("../../../movie_trailers/models")
 
+import json
 import settings
+import requests
 
 from celery import Celery
 from datetime import datetime
@@ -160,5 +162,9 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Pacific Rim"
-    save_movie_info_to_mongo(title, save_similar_movies=True)
+    url = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    top_dvds = json.loads(requests.get(url).text)
+    print top_dvds
+    for movie in top_dvds.get('movies'):
+        print movie.get("title")
+        save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
