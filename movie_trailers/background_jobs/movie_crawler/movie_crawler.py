@@ -165,11 +165,11 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Pushing Tin"
-    save_movie_info_to_mongo.delay(title, save_similar_movies=True)
+    # title = "Pushing Tin"
+    # save_movie_info_to_mongo.delay(title, save_similar_movies=True)
 
-    # for movie in Movie.objects().order_by("-_metadata._date_added"):
-    #     index_movie(movie)
+    for movie in Movie.objects().order_by("-_metadata._date_added"):
+        index_movie(movie)
     # url = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
     # top_dvds = json.loads(requests.get(url).text)
     # print top_dvds

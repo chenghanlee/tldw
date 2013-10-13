@@ -1,3 +1,4 @@
+import fuzzywuzzy.fuzz
 import gdata.youtube
 import gdata.youtube.service
 import tmdb
@@ -162,9 +163,12 @@ class MovieInfo(object):
             query.vq = "{title} trailer {release_year} ".format(
                             title=self._movie, release_year=release_year)
             query.orderby = 'relevance'
+
             feed = self._yt_service.YouTubeQuery(query)
             entries = self._remove_long_youtube_videos(feed.entry[:3])
-            return self._remove_duplicate_youtube_videos(entries)
+            entries = self._remove_unrelated_videos(entries)
+            unique_entries = self._remove_duplicate_youtube_videos(entries)
+            return unique_entries
             
     def _remove_duplicate_youtube_videos(self, entries, threshold=5):
         '''
@@ -192,6 +196,12 @@ class MovieInfo(object):
         entries = filter(lambda entry:
                             int(entry.media.duration.seconds) < max_seconds,
                             entries)
+        return entries
+
+    def _remove_unrelated_videos(self, entries):
+        entries = filter(lambda entry:
+                        fuzzywuzzy.fuzz.ratio(entry.media.title.text.decode('utf-8').lower(), self._movie.lower()) > 20,
+                        entries)
         return entries
 
     def _extract_youtube_id(self, youtube_url):

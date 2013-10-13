@@ -201,3 +201,25 @@ li.no-margin-bottom{
 .thumbnail .caption p+p {
 	text-align: left;
 }
+
+/* search results */
+.search-title{
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+.search-thumbnail{
+	height: 207px;
+	width: 139px;
+	border: 1px solid #ccc;
+}
+
+.search-summary{
+	font-size: 14px;
+}
+
+ul.inline li {font-size: 14px;}
+ul.inline li:after{ content: " \2022 "; margin-left:6px; }
+ul.inline li:first-child {padding-left: 0px; }
+ul.inline li:last-child:after { content: ""; }
+

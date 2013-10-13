@@ -148,7 +148,7 @@ class Movie(db.Document, object):
     @property
     def release_date(self):
         return self._release_date
-
+    
     @property
     def poster(self):
         return self._poster

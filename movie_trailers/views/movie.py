@@ -1,4 +1,5 @@
 import json
+import movie_trailers.settings as settings
 
 from datetime import datetime, timedelta
 from flask import abort, Blueprint, g, jsonify, make_response, render_template, request
@@ -7,6 +8,7 @@ from movie_trailers.background_jobs.movie_stats.movie_stats import inc_view_coun
 from movie_trailers.constants import genres, sorts, TTL
 from movie_trailers.extensions import redis
 from movie_trailers.models.Movie import Movie
+from swiftype import swiftype
 
 movie = Blueprint("movie", __name__)
 
@@ -21,6 +23,28 @@ def set_http_header(response):
     response.headers['Expires'] = expires
     return response
 
+@movie.route("/search", methods=["POST"])
+def search(per_page=10):
+    USERNAME = settings.Config.SW_EMAIL
+    PASSWORD = settings.Config.SW_PASSWORD
+    API_KEY = settings.Config.SW_API_KEY
+    SW_ENGINE_SLUG = settings.Config.SW_ENGINE_SLUG
+    search_term = request.form.get('search')
+    client = swiftype.Client(username=USERNAME, password=PASSWORD,
+                api_key=API_KEY)
+
+    results = client.search(SW_ENGINE_SLUG, search_term, 
+                options={"search_fields": {"trailer": ["title"]}})
+    results = [result for result in results['body']['records']['trailer']][:per_page]
+    g.results = [{"thumbnail": result.get("picture"), "genres": result.get("genres"),
+                  "title": result.get("title"), "url": result.get("url"), 
+                  "release_year": str(result.get("release_date")).split("-")[0],
+                  "cast": result.get("cast"), "synopsis": result.get("synopsis")}
+                  for result in results]
+    g.search_term = search_term
+
+    return render_template("search.html")
+
 @movie.route("/genre/<genre>/<sort>/<int:page>", methods=["GET"])
 @movie.route("/genre/<genre>/<sort>", methods=["GET"])
 @movie.route("/genre/<genre>/", methods=["GET"])
@@ -34,7 +58,7 @@ def list_movie_by_genre_get(genre="all", page=1, sort="newest", per_page=32):
     if page < 1:
         return abort(404)
 
-    if sort not in ["newest", 'popular', 'best']:
+    if sort not in ["newest", "popular", "best"]:
         return abort(404)
 
     cursor = Movie.get_movies_by_genre(genre, sort).only(
@@ -90,7 +114,6 @@ def show_trailer(movie_name, index=1):
     redis.expire(key, TTL)
     return rv
 
-   
 @movie.route("/movie-trailer/<movie_name>/<int:index>", methods=["POST"])
 def return_youtube_id(movie_name, index=1):
     movie = Movie.get_movie_by_title(movie_name)

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block meta_tags %}
+  <title>Search results for {{ g.search_term }} | Movie Trailers</title>
+{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div class="span6 offset2">
+      <h1 class="title">Search results for: "<i>{{ g.search_term }}</i>"</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="span8 offset2">
+      <hr>
+      {% if g.results | length == 0 %}
+        <h4>No movies found</h4>
+        <hr>
+      {% else %}
+        {% for result in g.results %}
+          <div class="row">
+            <div class="span2">
+              <a href="{{ result['url'] }}">
+                <img class="pull-left search-thumbnail" src="{{ result['thumbnail'] }}">
+              </a>
+            </div>
+            <div class="span6">
+              <h5 class="search-title"><a href="{{ result['url'] }}">{{ result['title'] }} ({{ result['release_year'] }})</a></h5>
+              <ul class="inline">
+                {% for cast in result['cast'][:3] %}
+                  <li><b>{{ cast }}</b></li>
+                {% endfor %}
+              </ul>
+              <p class="search-summary">{{ result['synopsis'] | truncate(500) }}</p>
+            </div>
+          </div>
+          <hr>
+        {% endfor %}
+      {% endif %}
+    </div>
+    <div class="span2">
+      {% block right_sidebar %}
+      {% endblock %}
+    </div>
+  </div>
+{% endblock %}

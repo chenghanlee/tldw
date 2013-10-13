@@ -53,7 +53,7 @@ def index_movie(movie, verbose=False):
     client = swiftype.Client(username=USERNAME, password=PASSWORD,
                 api_key=API_KEY)
     try:
-        client.create_document(SW_ENGINE_SLUG, 'trailer', {
+        client.create_or_update_document(SW_ENGINE_SLUG, 'trailer', {
             'external_id':  movie.formatted_title,
             'fields': [
                 {'name': 'title', 'value': movie.title, 'type': 'string'},
@@ -64,6 +64,7 @@ def index_movie(movie, verbose=False):
                 {'name': 'release_date', 'value': str(movie.release_date), 'type': 'date'},
                 {'name': 'runtime', 'value': movie.metadata.runtime, 'type': 'integer'},
                 {'name': 'url', 'value': movie.url, 'type': 'enum'},
+                {'name': 'picture', 'value': movie.thumbnail, 'type': 'text'}
             ]
         })
     except Exception as e:
