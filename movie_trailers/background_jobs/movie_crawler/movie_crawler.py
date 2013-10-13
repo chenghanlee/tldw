@@ -96,14 +96,15 @@ def update_actors(actors, movie, verbose=False):
 
 @celery.task(name='movie_crawler.save_movie_info_to_mongo', ignore_result=True,
     queue="movie_crawler", rate_limit="2/m")
-def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
+def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False,
+        overwrite=False):
     AWS_ACCESS_KEY = settings.Config.AWS_ACCESS_KEY
     AWS_SECRET_KEY = settings.Config.AWS_SECRET_KEY
     AWS_AFFILIATE_KEY = settings.Config.AWS_AFFILIATE_KEY
     ROTTEN_TOMATOES_API_KEY = settings.Config.ROTTEN_TOMATOES_API_KEY
     TMDB_API_KEY = settings.Config.TMDB_API_KEY
 
-    if Movie.objects(_title=title).first() is not None:
+    if not overwrite and Movie.objects(_title=title).first() is not None:
         print "{title}found in db".format(title=title)
         return
 
@@ -165,8 +166,8 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Spring Breakers"
-    save_movie_info_to_mongo.delay(title, save_similar_movies=True)
+    title = "Harry Potter and the Goblet of Fire"
+    save_movie_info_to_mongo.delay(title, save_similar_movies=False, overwrite=True)
 
     
     # top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
