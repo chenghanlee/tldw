@@ -10,6 +10,7 @@ from celery import Celery
 from datetime import datetime
 from dateutil import parser
 from format_string import format_string
+from mongoengine import NotUniqueError
 from Movie import db, Actor, Metadata, Movie, PurchaseLink, Review
 from MovieInfo import MovieInfo
 from tasks import create_thumbnail, index_movie, update_actor_bio_and_picture
@@ -141,26 +142,32 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False,
     similar_movies_imdb_ids = convert_similar_movies_to_imdb_ids(
         similar_movies)
     
-    args ={"_director": director,
+    kargs ={"_director": director,
             "_formatted_director": formatted_director,
-            "_title": title, "_formatted_title": formatted_title, 
-            "_synopsis": synopsis, "_critics_score": critics_score,
-            "_release_date": release_date, "_poster": poster,
-            "_thumbnail": thumbnail, "_cast": actors, "_genres": genres,
-            "_metadata": metadata, "_reviews": reviews,
+            "_title": title,
+            "_formatted_title": formatted_title, 
+            "_synopsis": synopsis,
+            "_critics_score": critics_score,
+            "_release_date": release_date,
+            "_poster": poster,
+            "_thumbnail": thumbnail,
+            "_cast": actors, 
+            "_genres": genres,
+            "_metadata": metadata, 
+            "_reviews": reviews,
             "_similar_movies": similar_movies_imdb_ids,
             "_trailers": trailers,
             "_purchase_links": amazon_purchase_links}
-    try:
+
+    if not overwrite:
         print "saving {title}".format(title=title)
-        new_movie = Movie(args)
+        new_movie = Movie(**kargs)
         new_movie.save()
         index_movie(new_movie, verbose=True)
         update_actors(actors, new_movie, verbose=True)
-    except NotUniqueError:
+    else:
         print "updating {title}".format(title=title)
-        Movie.objects(_formatted_title=_formatted_title).update(
-            args)
+        Movie.objects(_formatted_title=formatted_title).first().save(**kargs)
 
     # save this movie's similar movies to mongo
     if save_similar_movies:
@@ -172,21 +179,20 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False,
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Now You See Me"
-    save_movie_info_to_mongo.delay(title, save_similar_movies=False, overwrite=True)
-
+    # title = "Harry Potter and the Goblet of Fire"
+    # save_movie_info_to_mongo.delay(title, save_similar_movies=True)
     
-    # top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
-    # current_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
-    # new_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/new_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
-    # urls = []
-    # urls.append(top_rentals)
-    # urls.append(current_releases)
-    # urls.append(new_releases)
+    top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    current_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    new_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/new_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    urls = []
+    urls.append(top_rentals)
+    urls.append(current_releases)
+    urls.append(new_releases)
 
-    # for url in urls:
-    #     dvds = json.loads(requests.get(url).text)
-    #     print dvds
-    #     for movie in dvds.get('movies'):
-    #         print movie.get("title")
-    #         save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
+    for url in urls:
+        dvds = json.loads(requests.get(url).text)
+        print dvds
+        for movie in dvds.get('movies'):
+            print movie.get("title")
+            save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
