@@ -123,6 +123,11 @@ class MovieInfo(object):
         '''
 
         movies = self._rt.info(self._rt_data['id'], 'similar')['movies']
+
+        # if movie is none or len(movies) == 0:
+        # search google current movie title +
+        # parse DOM for
+
         return movies
 
     @property

@@ -165,14 +165,21 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False):
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    # title = "Pushing Tin"
-    # save_movie_info_to_mongo.delay(title, save_similar_movies=True)
+    title = "Spring Breakers"
+    save_movie_info_to_mongo.delay(title, save_similar_movies=True)
 
-    for movie in Movie.objects().order_by("-_metadata._date_added"):
-        index_movie(movie)
-    # url = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
-    # top_dvds = json.loads(requests.get(url).text)
-    # print top_dvds
-    # for movie in top_dvds.get('movies'):
-    #     print movie.get("title")
-    #     save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
+    
+    # top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    # current_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    # new_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/new_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
+    # urls = []
+    # urls.append(top_rentals)
+    # urls.append(current_releases)
+    # urls.append(new_releases)
+
+    # for url in urls:
+    #     dvds = json.loads(requests.get(url).text)
+    #     print dvds
+    #     for movie in dvds.get('movies'):
+    #         print movie.get("title")
+    #         save_movie_info_to_mongo.delay(movie.get("title"), movie.get("id"))
