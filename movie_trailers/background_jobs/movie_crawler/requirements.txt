@@ -28,3 +28,4 @@ requests==2.0.0
 six==1.4.1
 supervisor==3.0
 wsgiref==0.1.2
+git+https://github.com/swiftype/swiftype-py.git
