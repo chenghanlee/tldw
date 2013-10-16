@@ -13,4 +13,4 @@ app.config.from_object('movie_trailers.settings.ProdConfig')
 db.init_app(app)
 
 
-# DebugToolbarExtension(app)
+#DebugToolbarExtension(app)

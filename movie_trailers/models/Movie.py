@@ -107,7 +107,8 @@ class Movie(db.Document, object):
     _thumbnail = db.StringField() # resized poster
     _trending_score = db.FloatField(default=0.0)
 
-    _cast = db.ListField(db.ReferenceField('Actor'))
+    # _cast = db.ListField(db.ReferenceField('Actor'))
+    _cast = db.ListField(db.ObjectIdField())
     _genres = db.ListField(db.StringField())
     _metadata = db.EmbeddedDocumentField(Metadata)
     _views = db.ListField(db.EmbeddedDocumentField(ViewCount))
@@ -181,7 +182,9 @@ class Movie(db.Document, object):
 
     @property
     def cast(self, limit=6):
-        return self._cast[:limit]
+        cursor = Actor.objects(id__in=self._cast[:limit]).only(
+            "_name", "_formatted_name")
+        return cursor
 
     @property
     def metadata(self):
@@ -296,5 +299,6 @@ class Actor(db.Document):
         sort_by = {'newest': '-_release_date',
                    'best': '-_critics_score'
                    }.get(sort, '-_metadata._updated')
-        cursor = Movie.objects.filter(id__in=self._filmography).order_by(sort_by)
+        cursor = Movie.objects.filter(id__in=self._filmography).order_by(sort_by).only(
+            "_thumbnail", "_release_date", "_title",  "_formatted_title")
         return cursor
