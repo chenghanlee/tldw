@@ -179,7 +179,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False,
             print "queuing up {title}".format(title=title)
     
 if __name__ == "__main__":
-    title = "Bram Stoker's Dracula"
+    title = "Muppets Most Wanted"
     save_movie_info_to_mongo(title, save_similar_movies=False, overwrite=True)
     
     # top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
