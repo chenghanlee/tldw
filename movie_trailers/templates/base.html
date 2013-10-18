@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -10,7 +11,6 @@
     <!--[if IE 7]>
       <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome-ie7.min.css">
     <![endif]-->
-
     <link href="/static/css/autocomplete.css" rel="stylesheet">
     <link href="/static/css/movie.css" rel="stylesheet">
     <link href="/static/css/typeplate.css" rel="stylesheet">
@@ -19,14 +19,17 @@
     <!-- loading typekit -->
     <script type="text/javascript" src="//use.typekit.net/erh3itx.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-    <script>
-      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <!-- google analytics -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-44934258-1']);
+      _gaq.push(['_trackPageview']);
 
-      ga('create', 'UA-44934258-1', '2ldw.com');
-      ga('send', 'pageview');
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
     </script>
   </head>
   <body> 
