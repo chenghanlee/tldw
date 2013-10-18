@@ -137,13 +137,8 @@ a.button:hover {
 }
 
 .search-box{
-	border-left: 2px solid #ccc;
+	border-left: 1px solid #ccc;
 	border-right: 1px solid #ccc;
-	margin-left: 17px;
-}
-
-input.search-query{
-	font-size: 15px;
 }
 
 form.form-search{
@@ -153,6 +148,8 @@ form.form-search{
 input.search-query{
 	border: 0;
 	height: 60px;
+	padding: 0 0px 0 10px;
+	font-size: 15px;
 }
 
 /* actor portrait*/

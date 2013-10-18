@@ -417,7 +417,7 @@
       'z-index': 9999,
       'top': offset.top + $attachEl.outerHeight() + 1,
       'left': offset.left,
-      'width': 461
+      'width': 460
     };
     // if (config.setWidth) {
     //   styles['width'] = $attachEl.outerWidth() - 2;
