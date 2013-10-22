@@ -3,7 +3,7 @@
 
 {% block meta_tags %}
   <meta charset="utf-8">
-  <title>{{ movie.title }} Official Movie Trailers | Too Long; Didn't Watch</title>
+  <title>{{ movie.title }} Official HD Movie Trailers | Too Long; Didn't Watch</title>
   <meta name="description" content="Watch {{ movie.title }} HD Trailers. Starring {% for cast in movie.cast[:3] %}{{ cast.name }}{% if loop.last == False %}, {% endif %}{% endfor %}. {{ movie.synopsis }}">
 {% endblock %}
 
