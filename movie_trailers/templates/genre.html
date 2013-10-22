@@ -2,6 +2,11 @@
 
 {% import 'gallery_helper.html' as helper %}
 
+{% block meta_tags %}
+  <title>{{ g.title | title }} Movie Trailers | Too Long; Didn't Watch</title>
+  <meta name="description" content="Watch {{ g.current_sort }} {{ g.current_genre }} movie trailers online. Many movie trailers are available in high-quality HD and iphone versions">
+{% endblock %}
+
 {% block left_sidebar %}
   <p><b>Sort by</b></p>
 	<ul class="unstyled">

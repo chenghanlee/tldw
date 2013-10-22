@@ -2,6 +2,11 @@
 
 {% import 'actor_helpers.html' as helper %}
 
+{% block meta_tags %}
+  <title>{{ g.actor.name | title }} Movie Trailers | Too Long; Didn't Watch</title>
+  <meta name="description" content="{{ g.actor.name | title }} Actor: {{ g.movies[0].title }}. {{ g.actor.biography }}">
+{% endblock %}
+
 {% block left_sidebar %}
   <p><b>Sort by</b></p>
   <ul class="unstyled">
