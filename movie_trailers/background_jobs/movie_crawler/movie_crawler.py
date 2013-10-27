@@ -181,7 +181,7 @@ def save_movie_info_to_mongo(title, rt_id=None, save_similar_movies=False,
 if __name__ == "__main__":
     # title = "Muppets Most Wanted"
     # save_movie_info_to_mongo(title, save_similar_movies=False, overwrite=True)
-    
+
     top_rentals = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/top_rentals.json?limit=50&country=us&apikey=psnmyahggacddrxj2xrx6b73"
     current_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/current_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
     new_releases = "http://api.rottentomatoes.com/api/public/v1.0/lists/dvds/new_releases.json?page_limit=50&page=1&country=us&apikey=psnmyahggacddrxj2xrx6b73"
